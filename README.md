@@ -1,6 +1,6 @@
-# Battle Trap
+# Ocean Rings
 
-Battle trap is a single player and multiplayer game where you must last the longest in the board without coliding with another players trail. Inspired by Tron, players can move there player when it is their turn. 
+The objective is to swim through the correct ring as depicted in the bottom right. Players move at a constant speed toward oncoming rings and the movement of the rings varies. If there is more than one player playing and all players get through their rings, a group bonus is given!
 
 ## Getting Started
 
@@ -14,17 +14,9 @@ npm run dev
 
 Aiming to have multiplayer via P2P and Websockets. Websocket backend code is not in this repo or available at this time. P2P code will be included here.
 
-## Board Game Version
+## Inspiration
+Inspired by the minigame inside Toontown
 
-I originally made this game as a board game for my Game Design Merit Badge. Here are some files you can use to print and play!
+https://toontownrewritten.fandom.com/wiki/Ring_Game
 
-https://www.scouting.org/merit-badges/game-design/
-
-Color Board
-![Battle Trap Board](public/img/Board%20Game/board-with-background.webp)
-
-Black and White Board
-![Battle Trap Board](public/img/Board%20Game/board-without-background.webp)
-
-Instructions
-![Battle Trap Instructions](public/img/Board%20Game/Instructions.webp)
+![Battle Trap Board](public/img/toontown-preview.webp)

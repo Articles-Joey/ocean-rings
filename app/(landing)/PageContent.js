@@ -576,7 +576,7 @@ export default function OceanRingsGameLandingPage() {
                                 Rules & Controls
                             </ArticlesButton>
 
-                            <Link href={'/'} className='w-50'>
+                            <Link href={'https://github.com/Articles-Joey/ocean-rings'} className='w-50' target="_blank" rel="noopener noreferrer">
                                 <ArticlesButton
                                     className={`w-100`}
                                     small
@@ -584,8 +584,8 @@ export default function OceanRingsGameLandingPage() {
 
                                     }}
                                 >
-                                    <i className="fad fa-sign-out"></i>
-                                    Leave Game
+                                    <i className="fab fa-github"></i>
+                                    Github
                                 </ArticlesButton>
                             </Link>
 

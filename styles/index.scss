@@ -3,3 +3,11 @@
 
 @use "./pages/lobby.scss" as *;
 @use "./pages/game.scss" as *;
+
+button {
+    font-size: 0.75rem!important;
+}
+
+i {
+    margin-right: 0.2rem;
+}
