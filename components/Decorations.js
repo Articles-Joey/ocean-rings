@@ -7,8 +7,14 @@ import { useMemo, useRef, useState } from "react"
 import generateRandomInteger from "@/util/generateRandomInteger"
 // import getRandomHexColor from "util/getRandomHexColor"
 
-const linkKelp = `${process.env.NEXT_PUBLIC_CDN}games/Ocean Rings/Kelp.glb`
-const linkKelpCoral = `${process.env.NEXT_PUBLIC_CDN}games/Ocean Rings/KelpCoral.glb`
+let linkKelp = `${process.env.NEXT_PUBLIC_CDN}games/Ocean Rings/Kelp.glb`
+let linkKelpCoral = `${process.env.NEXT_PUBLIC_CDN}games/Ocean Rings/KelpCoral.glb`
+
+// Will load from local public folder instead of CDN
+if (process.env.NEXT_PUBLIC_MODEL_SOURCE == "LOCAL") {
+    linkKelp = `/models/decorations/Kelp.glb`
+    linkKelpCoral = `/models/decorations/KelpCoral.glb`
+}
 
 function Kelp(props) {
     const { nodes, materials } = useGLTF(linkKelp)

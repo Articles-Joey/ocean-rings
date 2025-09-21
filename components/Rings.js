@@ -221,7 +221,7 @@ function Rings(props) {
         }))
 
         // Filter out obstacles that went past the player
-        newObstacles = newObstacles.filter((obstacle) => obstacle.position[2] <= 0);
+        newObstacles = newObstacles.filter((obstacle) => obstacle.position[2] <= 10);
 
         // Add new obstacles to maintain the array length
         while (newObstacles.length < obstacles.length) {
@@ -303,11 +303,11 @@ function Rings(props) {
                         }
                     />
 
-                    {(obstacle.id % 10 === 0) &&
+                    {(obstacle.id % 5 === 0) &&
                         <ModelKennyNLPirateShipWreck
                             position={
                                 [
-                                    10,
+                                    (obstacle.id % 10 === 0) ? 10 : -20,
                                     0,
                                     obstacle.position[2] + 18
                                 ]
