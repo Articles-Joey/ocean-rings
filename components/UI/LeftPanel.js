@@ -123,7 +123,7 @@ export default function LeftPanelContent(props) {
                 <div className="card-body d-flex justify-content-between">
 
                     <div>
-                        <div className="small text-muted">playerData</div>
+                        <div className="small fw-bold">playerData:</div>
                         <div className="small">
                             <div>X: {playerLocation?.x}</div>
                             <div>Y: {playerLocation?.y}</div>
@@ -157,7 +157,7 @@ export default function LeftPanelContent(props) {
             >
                 <div className="card-body">
 
-                    <div className="small text-muted">Touch Controls</div>
+                    <div className="small">Touch Controls</div>
 
                     <div className='d-flex flex-column'>
 
@@ -198,7 +198,7 @@ export default function LeftPanelContent(props) {
             >
                 <div className="card-body">
 
-                    <div className="small text-muted">Debug Controls</div>
+                    <div className="small">Debug Controls</div>
 
                     <div className='d-flex flex-column'>
 

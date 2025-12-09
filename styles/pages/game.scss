@@ -131,10 +131,35 @@
         // padding: 1rem;
     }
 
-    .panel-left, .panel-right {        
+    .panel-left,
+    .panel-right {
         width: 300px;
         height: calc(100vh - 0px);
         flex-shrink: 0;
+    }
+
+    // TODO - Finish
+    .panel-left {
+        @include media-breakpoint-up(lg) {
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            z-index: 2;
+            height: initial;
+            bottom: 1rem;
+
+            background-color: rgba(65, 105, 225, 0.5);
+            color: white !important;
+
+            .card {
+                background-color: rgba(4, 30, 109, 0.5);
+                color: white !important;
+
+                &:not(:last-child) {
+                    margin-bottom: 1rem;
+                }
+            }
+        }
     }
 
     .panel-right {

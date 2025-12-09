@@ -9,6 +9,8 @@ import "bootstrap/dist/css/bootstrap.min.css";
 
 import "@/styles/index.scss";
 import SocketLogicHandler from "@/components/SocketLogicHandler";
+import { Suspense } from 'react';
+import DarkModeHandler from '@/components/UI/DarkModeHandler';
 
 export const metadata = {
   title: "Ocean Rings",
@@ -33,6 +35,10 @@ export default function RootLayout({ children }) {
       >
 
         <SocketLogicHandler />
+
+        <Suspense>
+          <DarkModeHandler />
+        </Suspense>
 
         <AppRouterCacheProvider options={{ enableCssLayer: true }}>
           <ThemeProvider theme={theme}>

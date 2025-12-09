@@ -15,6 +15,7 @@ import { useLocalStorageNew } from '@/hooks/useLocalStorageNew';
 import IsDev from '@/components/UI/IsDev';
 // import { ChromePicker } from 'react-color';
 import { useSocketStore } from '@/hooks/useSocketStore';
+import { useGameStore } from '@/hooks/useGameStore';
 
 const GameScoreboard = dynamic(() => import('@/components/UI/GameScoreboard'), {
     ssr: false,
@@ -71,6 +72,9 @@ export default function OceanRingsGameLandingPage() {
     const userReduxState = false
 
     const [nickname, setNickname] = useLocalStorageNew("game:nickname", userReduxState.display_name)
+
+    const darkMode = useGameStore((state) => state.darkMode);
+    const setDarkMode = useGameStore((state) => state.setDarkMode);
 
     const [showInfoModal, setShowInfoModal] = useState(false)
     const [showSettingsModal, setShowSettingsModal] = useState(false)
@@ -600,6 +604,18 @@ export default function OceanRingsGameLandingPage() {
                             >
                                 <i className="fad fa-users"></i>
                                 Credits
+                            </ArticlesButton>
+
+                            <ArticlesButton
+                                className={`w-50`}
+                                small
+                                onClick={() => {
+                                    setDarkMode(!darkMode);
+                                }}
+                                active={darkMode}
+                            >
+                                <i className="fad fa-palette"></i>
+                                Dark Mode
                             </ArticlesButton>
 
                         </div>

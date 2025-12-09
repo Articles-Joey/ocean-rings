@@ -3,6 +3,13 @@ import { createWithEqualityFn as create } from 'zustand/traditional'
 
 export const useGameStore = create((set) => ({
 
+    darkMode: null,
+    setDarkMode: (newValue) => {
+        set((prev) => ({
+            darkMode: newValue
+        }))
+    },
+
     cameraMode: 'Player',
     setCameraMode: (newValue) => {
         set((prev) => ({
