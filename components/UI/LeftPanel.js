@@ -9,6 +9,7 @@ import ArticlesButton from "@/components/UI/Button";
 import ControllerPreview from '@/components/UI/ControllerPreview';
 
 import { useSocketStore } from "@/hooks/useSocketStore";
+import useFullscreen from "@/hooks/useFullScreen";
 
 export default function LeftPanelContent(props) {
 
@@ -19,11 +20,13 @@ export default function LeftPanelContent(props) {
         setTouchControlsEnabled,
         reloadScene,
         controllerState,
-        isFullscreen,
-        requestFullscreen,
-        exitFullscreen,
+        // isFullscreen,
+        // requestFullscreen,
+        // exitFullscreen,
         setShowMenu
     } = props;
+
+    const { isFullscreen, requestFullscreen, exitFullscreen } = useFullscreen();
 
     const {
         socket,

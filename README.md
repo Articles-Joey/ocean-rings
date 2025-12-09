@@ -2,6 +2,8 @@
 
 The objective is to swim through the correct ring as depicted in the bottom right. Players move at a constant speed toward oncoming rings and the movement of the rings varies. If there is more than one player playing and all players get through their rings, a group bonus is given!
 
+![Preview](public/img/preview.webp)
+
 ## Getting Started
 
 First, run the development server:
@@ -25,7 +27,7 @@ Inspired by the minigame inside Toontown
 
 https://toontownrewritten.fandom.com/wiki/Ring_Game
 
-![Battle Trap Board](public/img/toontown-preview.webp)
+![Toontown Screenshot](public/img/toontown-preview.webp)
 
 ## Attributions
 [Fish Models - Quaternius](https://quaternius.com/packs/cutefish.html)  

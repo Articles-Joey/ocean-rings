@@ -445,9 +445,9 @@ export default function OceanRingsGamePage() {
         setTouchControlsEnabled,
         reloadScene,
         controllerState,
-        isFullscreen,
-        requestFullscreen,
-        exitFullscreen,
+        // isFullscreen,
+        // requestFullscreen,
+        // exitFullscreen,
         setShowMenu
     }
 

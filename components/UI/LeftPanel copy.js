@@ -19,9 +19,9 @@ export default function LeftPanelContent(props) {
         setTouchControlsEnabled,
         reloadScene,
         controllerState,
-        isFullscreen,
-        requestFullscreen,
-        exitFullscreen,
+        // isFullscreen,
+        // requestFullscreen,
+        // exitFullscreen,
         setShowMenu
     } = props;
 
