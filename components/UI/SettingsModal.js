@@ -13,7 +13,7 @@ export default function FourFrogsSettingsModal({
 
     const [lightboxData, setLightboxData] = useState(null)
 
-    const [tab, setTab] = useState('Controls')
+    const [tab, setTab] = useState('Graphics')
 
     return (
         <>
@@ -45,16 +45,17 @@ export default function FourFrogsSettingsModal({
             >
 
                 <Modal.Header closeButton>
-                    <Modal.Title>Game Settings</Modal.Title>
+                    <Modal.Title>Settings</Modal.Title>
                 </Modal.Header>
 
                 <Modal.Body className="flex-column p-0">
 
                     <div className='p-2'>
                         {[
+                            'Graphics',
                             'Controls',
                             'Audio',
-                            'Chat'
+                            // 'Chat'
                         ].map(item =>
                             <ArticlesButton
                                 key={item}
@@ -88,29 +89,6 @@ export default function FourFrogsSettingsModal({
                                         action: 'Move Right',
                                         defaultKeyboardKey: 'D'
                                     },
-                                    {
-                                        action: 'Drop Insect',
-                                        defaultKeyboardKey: 'Space'
-                                    },
-                                    {
-                                        action: 'Stop Powerup',
-                                        defaultKeyboardKey: 'ArrowDown'
-                                    },
-                                    {
-                                        emote: true,
-                                        action: 'Stick out Tongue',
-                                        defaultKeyboardKey: 'ArrowDown'
-                                    },
-                                    {
-                                        emote: true,
-                                        action: 'Rotate Left',
-                                        defaultKeyboardKey: 'ArrowLeft'
-                                    },
-                                    {
-                                        emote: true,
-                                        action: 'Rotate Right',
-                                        defaultKeyboardKey: 'ArrowRight'
-                                    }
                                 ].map(obj =>
                                     <div key={obj.action}>
                                         <div className="flex-header border-bottom pb-1 mb-1">
@@ -122,9 +100,9 @@ export default function FourFrogsSettingsModal({
 
                                             <div>
 
-                                                <div className="badge badge-hover bg-articles me-1">{obj.defaultKeyboardKey}</div>
+                                                <div className="badge badge-hover bg-black border me-1">{obj.defaultKeyboardKey}</div>
 
-                                                <ArticlesButton 
+                                                <ArticlesButton
                                                     className=""
                                                     small
                                                 >

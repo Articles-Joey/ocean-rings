@@ -11,6 +11,7 @@ import "@/styles/index.scss";
 import SocketLogicHandler from "@/components/SocketLogicHandler";
 import { Suspense } from 'react';
 import DarkModeHandler from '@/components/UI/DarkModeHandler';
+import GlobalClientModals from '@/components/UI/GlobalClientModals';
 
 export const metadata = {
   title: "Ocean Rings",
@@ -38,6 +39,7 @@ export default function RootLayout({ children }) {
 
         <Suspense>
           <DarkModeHandler />
+          <GlobalClientModals />
         </Suspense>
 
         <AppRouterCacheProvider options={{ enableCssLayer: true }}>

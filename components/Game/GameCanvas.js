@@ -9,12 +9,15 @@ import Player from './Player';
 import { memo, useMemo } from 'react';
 // import MovingPlatform from './Platforms/MovingPlatform';
 import { useGameStore } from '@/hooks/useGameStore';
-import Bounds from './Bounds';
+// import Bounds from './Bounds';
 import Rings from './Rings';
 // import getRandomHexColor from 'util/getRandomHexColor';
 import Decorations from './Decorations';
+import OceanSurface from './OceanSurface';
 
-function GameCanvas(props) {
+function GameCanvas({
+    landingAnimation
+}) {
 
     // const {
     //     // setPlayerData, 
@@ -44,11 +47,15 @@ function GameCanvas(props) {
     let gameContent = (
         <>
 
+            <OceanSurface />
+
             <Rings />
 
             <Player
                 position={[0, 1, 0]}
             />
+
+            <Decorations position={[0, 0, 0]} />
 
         </>
     )
@@ -79,6 +86,7 @@ function GameCanvas(props) {
             /> */}
 
             <color attach="background" args={['#215776']} />
+            <fog attach="fog" args={['#215776', 10, 50]} />
 
             {/* Add your 3D scene components here */}
             <ambientLight intensity={2} />

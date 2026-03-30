@@ -8,7 +8,7 @@ import * as THREE from 'three'
 
 import { useGameStore } from '@/hooks/useGameStore';
 
-const floor_size = [50, 0.25, 10]
+const floor_size = [75, 0.25, 10]
 
 export default function Bounds(props) {
 

@@ -5,6 +5,7 @@ import { useGLTF } from '@react-three/drei'
 import { useMemo, useRef, useState } from "react"
 
 import generateRandomInteger from "@/util/generateRandomInteger"
+import { ModelRockLarge } from "./Rock_Large"
 // import getRandomHexColor from "util/getRandomHexColor"
 
 let linkKelp = `${process.env.NEXT_PUBLIC_CDN}games/Ocean Rings/Kelp.glb`
@@ -42,6 +43,20 @@ function KelpCoral(props) {
 function Decorations({ position }) {
 
     const refX = useRef(generateRandomInteger(-5, 5));
+
+    // Generate random rock properties once on mount
+    const rockPositions = useMemo(() => {
+        return [...Array(3)].map(() => ({
+            id: Math.random().toString(36).substring(2, 11),
+            position: [
+                generateRandomInteger(-10, 10),
+                0, // Fixed height on the floor
+                generateRandomInteger(-5, 5)
+            ],
+            rotation: [0, generateRandomInteger(0, 360) * (Math.PI / 180), 0],
+            scale: generateRandomInteger(8, 15) / 100
+        }));
+    }, []);
 
     // useFrame(() => {
     //     if (ref.current) {
@@ -106,13 +121,22 @@ function Decorations({ position }) {
                 ]}
             />
 
-<KelpCoral
+            <KelpCoral
                 position={[
                     25,
                     8,
                     0
                 ]}
             />
+
+            {rockPositions.map((rock) => (
+                <ModelRockLarge
+                    key={rock.id}
+                    position={rock.position}
+                    rotation={rock.rotation}
+                    scale={rock.scale}
+                />
+            ))}
 
         </group>
     )

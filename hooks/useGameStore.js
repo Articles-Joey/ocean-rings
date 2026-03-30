@@ -1,14 +1,17 @@
 // import { create } from 'zustand'
 import { createWithEqualityFn as create } from 'zustand/traditional'
+import { generateRandomFishNickname } from '../util/generateRandomFishNickname'
+
+const assets_src = 'games/Ocean Rings/'
 
 export const useGameStore = create((set) => ({
 
-    darkMode: null,
-    setDarkMode: (newValue) => {
-        set((prev) => ({
-            darkMode: newValue
-        }))
-    },
+    // darkMode: null,
+    // setDarkMode: (newValue) => {
+    //     set((prev) => ({
+    //         darkMode: newValue
+    //     }))
+    // },
 
     cameraMode: 'Player',
     setCameraMode: (newValue) => {

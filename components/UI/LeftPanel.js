@@ -10,6 +10,7 @@ import ControllerPreview from '@/components/UI/ControllerPreview';
 
 import { useSocketStore } from "@/hooks/useSocketStore";
 import useFullscreen from "@/hooks/useFullScreen";
+import { useStore } from "@/hooks/useStore";
 
 export default function LeftPanelContent(props) {
 
@@ -33,6 +34,12 @@ export default function LeftPanelContent(props) {
     } = useSocketStore(state => ({
         socket: state.socket,
     }));
+
+    const setShowSettingsModal = useStore(state => state.setShowSettingsModal)
+    const sidebar = useStore(state => state.sidebar)
+    const setSidebar = useStore(state => state.setSidebar)
+    const toggleSidebar = useStore(state => state.toggleSidebar)
+
 
     const {
         cameraMode, setCameraMode,
@@ -112,6 +119,29 @@ export default function LeftPanelContent(props) {
                         {isFullscreen && <span>Exit </span>}
                         {!isFullscreen && <span><i className='fad fa-expand'></i></span>}
                         <span>Fullscreen</span>
+                    </ArticlesButton>
+
+                    <ArticlesButton
+                        small
+                        className='w-50'
+                        onClick={() => {
+                            setShowSettingsModal(true)
+                        }}
+                    >
+                        <i className="fad fa-cog"></i>
+                        <span>Settings</span>
+                    </ArticlesButton>
+
+                     <ArticlesButton
+                        small
+                        className='w-50'
+                        active={sidebar}
+                        onClick={() => {
+                            toggleSidebar()
+                        }}
+                    >
+                        <i className="fad fa-cog"></i>
+                        <span>Sidebar</span>
                     </ArticlesButton>
 
                 </div>

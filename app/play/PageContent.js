@@ -22,7 +22,7 @@ import { useLocalStorageNew } from '@/hooks/useLocalStorageNew';
 import LeftPanelContent from '@/components/UI/LeftPanel';
 import { useSocketStore } from '@/hooks/useSocketStore';
 
-const GameCanvas = dynamic(() => import('@/components/GameCanvas'), {
+const GameCanvas = dynamic(() => import('@/components/Game/GameCanvas'), {
     ssr: false,
 });
 

@@ -6,16 +6,29 @@ import { memo, useEffect, useMemo, useRef, useState } from "react"
 import generateRandomInteger from "@/util/generateRandomInteger"
 import getRandomHexColor from "@/util/getRandomHexColor"
 import { useGameStore } from "@/hooks/useGameStore";
-import Bounds from "./Bounds";
+import Ground from "./Ground";
 import Decorations from "./Decorations";
 import { ModelKennyNLPirateShipWreck } from "@/components/Game/ship_wreck";
 import { degToRad } from "three/src/math/MathUtils.js";
+import Shadow from "./Shadow";
 
 function Ring(props) {
 
     const [zPosition, setZPosition] = useState(props.position[2]);
     const [hasPassed, setHasPassed] = useState(false);
     const [hasPassedFar, setHasPassedFar] = useState(false);
+
+    // Calculate opacity based on position relative to player
+    // Rings fade out as they move from z=0 to z=10 (past the player)
+    const calculateOpacity = () => {
+        const z = props.position[2];
+        if (z < 0) return 1; // Before player, fully visible
+        if (z > 10) return 0; // Past despawn point, invisible
+        // Fade from 1 to 0 between z=0 and z=10
+        return 1 - (z / 10);
+    };
+
+    const ringOpacity = calculateOpacity();
 
     // const ref = useRef();
     const [ref, api] = useSphere(() => ({
@@ -114,6 +127,8 @@ function Ring(props) {
     return (
         <group ref={ref}>
 
+            {ringOpacity > 0 && <Shadow radius={1.2} opacity={0.6 * ringOpacity} position={[0, 0.26 - props.position[1], 0]} />}
+
             {
                 // (
                 //     zPosition.toFixed(0)
@@ -125,7 +140,7 @@ function Ring(props) {
                 // position={props.position}
                 >
 
-                    {!hasPassedFar &&
+                    {ringOpacity > 0 &&
                         <mesh
                         // position={props.position}
                         >
@@ -134,15 +149,13 @@ function Ring(props) {
                                 attach="material"
                                 color={randomColor}
                                 transparent={true}
-                                opacity={hasPassed ? 0.1 : 1}
+                                opacity={ringOpacity}
                             />
                         </mesh>
                     }
 
-                    {!hasPassedFar && <mesh
+                    {ringOpacity > 0 && <mesh
                         // ref={refCylinder}as
-                        opacity={hasPassed ? 0.1 : 1}
-                        transparent={true}
                         // position={props.position}
                         rotation={[-Math.PI / 2, 0, 0]}
                     >
@@ -151,7 +164,7 @@ function Ring(props) {
 
                         <meshStandardMaterial
                             {...props}
-                            opacity={hasPassed ? 0.1 : 0.5}
+                            opacity={ringOpacity * 0.5}
                             transparent={true}
                             color="gray"
                         />
@@ -292,7 +305,7 @@ function Rings(props) {
             {obstacles?.map((obstacle, obstacle_i) => (
                 <group key={obstacle.id}>
 
-                    <Bounds
+                    <Ground
                         position={
                             // obstacle.position
                             [

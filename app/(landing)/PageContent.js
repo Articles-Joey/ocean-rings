@@ -16,6 +16,15 @@ import IsDev from '@/components/UI/IsDev';
 // import { ChromePicker } from 'react-color';
 import { useSocketStore } from '@/hooks/useSocketStore';
 import { useGameStore } from '@/hooks/useGameStore';
+import { generateRandomFishNickname } from '@/util/generateRandomFishNickname';
+import { useStore } from '@/hooks/useStore';
+
+// import LandingBackgroundAnimation from '@/components/Game/LandingBackgroundAnimation';
+
+const LandingBackgroundAnimation = dynamic(() => import('@/components/Game/LandingBackgroundAnimation'), {
+    ssr: false,
+    loading: () => <p>Loading...</p>
+});
 
 const GameScoreboard = dynamic(() => import('@/components/UI/GameScoreboard'), {
     ssr: false,
@@ -71,10 +80,14 @@ export default function OceanRingsGameLandingPage() {
     // const userReduxState = useSelector((state) => state.auth.user_details)
     const userReduxState = false
 
-    const [nickname, setNickname] = useLocalStorageNew("game:nickname", userReduxState.display_name)
+    const nickname = useStore((state) => state.nickname);
+    const setNickname = useStore((state) => state.setNickname);
+    const randomNickname = useStore((state) => state.randomNickname);
 
-    const darkMode = useGameStore((state) => state.darkMode);
-    const setDarkMode = useGameStore((state) => state.setDarkMode);
+    const landingBackgroundAnimation = useStore((state) => state.landingBackgroundAnimation);
+
+    const darkMode = useStore((state) => state.darkMode);
+    const setDarkMode = useStore((state) => state.setDarkMode);
 
     const [showInfoModal, setShowInfoModal] = useState(false)
     const [showSettingsModal, setShowSettingsModal] = useState(false)
@@ -85,35 +98,14 @@ export default function OceanRingsGameLandingPage() {
         games: [],
     })
 
-    const [character, setCharacter] = useLocalStorageNew("game:ocean-rings:character", {
-        model: 'Clownfish',
-        color: '#000000'
-    })
+    // const [character, setCharacter] = useLocalStorageNew("game:ocean-rings:character", {
+    //     model: 'Clownfish',
+    //     color: '#000000'
+    // })
 
-    const characters = [
-        {
-            name: "Clownfish",
-            image: `${process.env.NEXT_PUBLIC_CDN}${assets_src}ClownfishModelThumb.jpg`,
-            model:
-                (
-                    <group>
-                        <Clownfish color={character.color} />
-                    </group>
-                ),
-            defaultColor: '#FFFFFF',
-        },
-        {
-            name: "Bone Fish",
-            image: `${process.env.NEXT_PUBLIC_CDN}${assets_src}BoneFishModelThumb.jpg`,
-            model:
-                (
-                    <group>
-                        <BoneFish color={character.color} />
-                    </group>
-                ),
-            defaultColor: '',
-        }
-    ]
+    const character = useStore((state) => state.character);
+    const setCharacter = useStore((state) => state.setCharacter);
+    const characters = useStore((state) => state.characters);
 
     const [characterEdit, setCharacterEdit] = useState()
     const [colorEdit, setColorEdit] = useState()
@@ -132,42 +124,42 @@ export default function OceanRingsGameLandingPage() {
 
     // }, [socket]);
 
-    useEffect(() => {
+    // useEffect(() => {
 
-        setShowInfoModal(localStorage.getItem('game:four-frogs:rulesAnControls') === 'true' ? true : false)
+    //     setShowInfoModal(localStorage.getItem('game:four-frogs:rulesAnControls') === 'true' ? true : false)
 
-        // if (userReduxState._id) {
-        //     console.log("Is user")
-        // }
+    //     // if (userReduxState._id) {
+    //     //     console.log("Is user")
+    //     // }
 
-        socket.on('game:four-frogs-landing-details', function (msg) {
-            console.log('game:four-frogs-landing-details', msg)
+    //     socket.on('game:four-frogs-landing-details', function (msg) {
+    //         console.log('game:four-frogs-landing-details', msg)
 
-            if (JSON.stringify(msg) !== JSON.stringify(lobbyDetails)) {
-                setLobbyDetails(msg)
-            }
-        });
+    //         if (JSON.stringify(msg) !== JSON.stringify(lobbyDetails)) {
+    //             setLobbyDetails(msg)
+    //         }
+    //     });
 
-        return () => {
-            socket.off('game:four-frogs-landing-details');
-        };
+    //     return () => {
+    //         socket.off('game:four-frogs-landing-details');
+    //     };
 
-    }, [])
+    // }, [])
 
-    useEffect(() => {
+    // useEffect(() => {
 
-        localStorage.setItem('game:four-frogs:rulesAnControls', showInfoModal)
+    //     localStorage.setItem('game:four-frogs:rulesAnControls', showInfoModal)
 
-    }, [showInfoModal])
+    // }, [showInfoModal])
 
     useEffect(() => {
 
         if (socket.connected) {
-            socket.emit('join-room', 'game:four-frogs-landing');
+            socket.emit('join-room', 'game:ocean-rings-landing');
         }
 
         return function cleanup() {
-            socket.emit('leave-room', 'game:four-frogs-landing')
+            socket.emit('leave-room', 'game:ocean-rings-landing')
         };
 
     }, [socket.connected]);
@@ -198,12 +190,16 @@ export default function OceanRingsGameLandingPage() {
             } */}
 
             <div className='background-wrap'>
-                <Image
-                    src={`${process.env.NEXT_PUBLIC_CDN}games/Ocean Rings/background.jpg`}
-                    alt=""
-                    fill
-                    style={{ objectFit: 'cover', objectPosition: 'bottom' }}
-                />
+                {landingBackgroundAnimation ?
+                    <LandingBackgroundAnimation />
+                    :
+                    <Image
+                        src={`${process.env.NEXT_PUBLIC_CDN}games/Ocean Rings/background.jpg`}
+                        alt=""
+                        fill
+                        style={{ objectFit: 'cover', objectPosition: 'bottom' }}
+                    />
+                }
             </div>
 
             <div className="container d-flex flex-column-reverse flex-lg-row justify-content-center align-items-center">
@@ -382,7 +378,7 @@ export default function OceanRingsGameLandingPage() {
                                     >
                                         <div>
                                             <Viewer scale={13}>
-                                                {characters.find(item => item.name == character.model)?.model}
+                                                {characters?.find(item => item.name == character.model)?.model}
                                             </Viewer>
                                         </div>
                                     </div>
@@ -409,14 +405,25 @@ export default function OceanRingsGameLandingPage() {
                                         setValue={setNickname}
                                         noMargin
                                     /> */}
-                                    <input
-                                        type="text"
-                                        value={nickname}
-                                        onChange={(e) => {
-                                            setNickname(e.target.value)
-                                        }}
-                                        className={`form-control form-control-sm`}
-                                    />
+                                    <div className="d-flex align-items-center">
+                                        <input
+                                            type="text"
+                                            value={nickname}
+                                            onChange={(e) => {
+                                                setNickname(e.target.value)
+                                            }}
+                                            className={`form-control form-control-sm`}
+                                        />
+                                        <ArticlesButton
+                                            small
+                                            className="ms-2"
+                                            onClick={() => {
+                                                setNickname(generateRandomFishNickname())
+                                            }}
+                                        >
+                                            <i className="fad fa-random"></i>
+                                        </ArticlesButton>
+                                    </div>
                                 </div>
 
                                 <div className='mt-1' style={{ fontSize: '0.8rem' }}>Visible to all players</div>
@@ -544,7 +551,7 @@ export default function OceanRingsGameLandingPage() {
                                         className="w-50"
                                         variant='warning'
                                         onClick={() => {
-                                            socket.emit('game:four-frogs:reset', '');
+                                            socket.emit('game:ocean-rings:reset', '');
                                         }}
                                     >
                                         Reset Server

@@ -12,6 +12,7 @@ import { useControlsStore, useGameStore } from "@/hooks/useGameStore";
 import ClownfishModel from "@/components/PlayerModels/Clownfish"
 import BoneFishModel from "@/components/PlayerModels/BoneFish"
 import { useLocalStorageNew } from "@/hooks/useLocalStorageNew"
+import Shadow from "./Shadow"
 
 const JUMP_FORCE = 6;
 const SPEED = 4;
@@ -125,7 +126,7 @@ function PlayerBase(props) {
         addDistance(0.1)
 
         if (cameraMode == "Player") {
-            camera.position.copy(new Vector3(0, pos.current[1], (pos.current[2] + 25)))
+            camera.position.copy(new Vector3(0, pos.current[1], (pos.current[2] + 15)))
             camera.lookAt(new Vector3(0, pos.current[1], (pos.current[2] + 5)))
         }
 
@@ -158,8 +159,25 @@ function PlayerBase(props) {
         //     console.log("location unchanged")
         // }
 
-        if (pos.current[1] > maxHeight) {
-            setMaxHeight(pos.current[1].toFixed(2))
+        // Prevent player from going above 6.5
+        if (pos.current[1] >= 6.5) {
+            api.position.set(pos.current[0], 6.5, pos.current[2]);
+            if (vel.current[1] > 0) {
+                api.velocity.set(vel.current[0], 0, vel.current[2]);
+            }
+        }
+
+        // Keep player between -10 and 10 on the X axis
+        if (pos.current[0] < -10) {
+            api.position.set(-10, pos.current[1], pos.current[2]);
+            if (vel.current[0] < 0) {
+                api.velocity.set(0, vel.current[1], vel.current[2]);
+            }
+        } else if (pos.current[0] > 10) {
+            api.position.set(10, pos.current[1], pos.current[2]);
+            if (vel.current[0] > 0) {
+                api.velocity.set(0, vel.current[1], vel.current[2]);
+            }
         }
 
         const direction = new Vector3()
@@ -210,6 +228,8 @@ function PlayerBase(props) {
 
     return (
         <group>
+
+            <Shadow radius={0.8} opacity={0.7} position={[pos.current[0], 0.26, pos.current[2]]} />
 
             <mesh
                 ref={ref}
