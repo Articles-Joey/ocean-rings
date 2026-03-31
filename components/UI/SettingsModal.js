@@ -3,11 +3,21 @@ import { useState } from "react";
 import { Modal, Form } from "react-bootstrap"
 
 import ArticlesButton from "@/components/UI/Button";
+import { useStore } from "@/hooks/useStore";
 
 export default function FourFrogsSettingsModal({
     show,
     setShow,
 }) {
+
+    const graphicsQuality = useStore(state => state.graphicsQuality);
+    const setGraphicsQuality = useStore(state => state.setGraphicsQuality);
+
+    const darkMode = useStore(state => state.darkMode);
+    const setDarkMode = useStore(state => state.setDarkMode);
+
+    const landingAnimation = useStore(state => state.landingAnimation);
+    const setLandingAnimation = useStore(state => state.setLandingAnimation);
 
     const [showModal, setShowModal] = useState(true)
 
@@ -70,6 +80,71 @@ export default function FourFrogsSettingsModal({
                     <hr className="my-0" />
 
                     <div className="p-2">
+
+                        {tab == 'Graphics' &&
+                            <div>
+
+                                <div className="mb-3">
+                                    <div className="text-muted mb-1">Dark Mode</div>
+                                    <ArticlesButton
+                                        // key={level}
+                                        className={``}
+                                        active={!darkMode}
+                                        // small
+                                        onClick={() => setDarkMode(false)}
+                                    >
+                                        Off
+                                    </ArticlesButton>
+                                    <ArticlesButton
+                                        // key={level}
+                                        className={``}
+                                        active={darkMode}
+                                        // small
+                                        onClick={() => setDarkMode(true)}
+                                    >
+                                        On
+                                    </ArticlesButton>
+                                </div>
+
+                                <div className="mb-3">
+                                    <div className="text-muted mb-1">Landing Animation</div>
+                                    <ArticlesButton
+                                        // key={level}
+                                        className={``}
+                                        active={!landingAnimation}
+                                        // small
+                                        onClick={() => setLandingAnimation(false)}
+                                    >
+                                        Off
+                                    </ArticlesButton>
+                                    <ArticlesButton
+                                        // key={level}
+                                        className={``}
+                                        active={landingAnimation}
+                                        // small
+                                        onClick={() => setLandingAnimation(true)}
+                                    >
+                                        On
+                                    </ArticlesButton>
+                                </div>
+
+                                <div>
+                                    <div className="text-muted mb-1">Graphics Quality</div>
+                                    {['Low', 'Medium', 'High'].map(level =>
+                                        <ArticlesButton
+                                            key={level}
+                                            className={``}
+                                            active={level == graphicsQuality}
+                                            // small
+                                            onClick={() => setGraphicsQuality(level)}
+                                        >
+                                            {level}
+                                        </ArticlesButton>
+                                    )}
+                                </div>
+                            </div>
+                        }
+
                         {tab == 'Controls' &&
                             <div>
                                 {[
@@ -117,6 +192,29 @@ export default function FourFrogsSettingsModal({
                         }
                         {tab == 'Audio' &&
                             <>
+
+                                <div className="mb-3">
+                                    <div className="text-muted mb-1">Site Audio</div>
+                                    <ArticlesButton
+                                        // key={level}
+                                        className={``}
+                                        active={!darkMode}
+                                        // small
+                                        onClick={() => setDarkMode(false)}
+                                    >
+                                        Off
+                                    </ArticlesButton>
+                                    <ArticlesButton
+                                        // key={level}
+                                        className={``}
+                                        active={darkMode}
+                                        // small
+                                        onClick={() => setDarkMode(true)}
+                                    >
+                                        On
+                                    </ArticlesButton>
+                                </div>
+
                                 <Form.Label className="mb-0">Game Volume</Form.Label>
                                 <Form.Range />
                                 <Form.Label className="mb-0">Music Volume</Form.Label>

@@ -22,6 +22,11 @@ NEXT_PUBLIC_MODEL_SOURCE = LOCAL
 
 Aiming to have multiplayer via P2P and Websockets. Websocket backend code is not in this repo or available at this time. P2P code will be included here.
 
+## TODO
+
+- Procedural floor terrain
+- Peer mode
+
 ## Inspiration
 Inspired by the minigame inside Toontown
 

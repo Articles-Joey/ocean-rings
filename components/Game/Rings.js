@@ -14,9 +14,10 @@ import Shadow from "./Shadow";
 
 function Ring(props) {
 
-    const [zPosition, setZPosition] = useState(props.position[2]);
-    const [hasPassed, setHasPassed] = useState(false);
-    const [hasPassedFar, setHasPassedFar] = useState(false);
+    // Local hit tracking — no store needed
+    const hitRef = useRef(false);       // set to true when player collides with this ring
+    const lockedRef = useRef(false);    // prevents overwriting color once it's been set
+    const [innerColor, setInnerColor] = useState('gray');
 
     // Calculate opacity based on position relative to player
     // Rings fade out as they move from z=0 to z=10 (past the player)
@@ -36,26 +37,26 @@ function Ring(props) {
         // type: 'Static',
         isTrigger: true,
         onCollide: (e) => {
-
-            // console.log("collide detected!", alreadyTriggeredRef.current)
-
-            // Could not pass trigger state via userData to player as state was always stale so now just passing the obstacle id now and player will prevent recalling game over for the same obstacle id after restart
-
-            // alreadyTriggeredRef.current = true
-            // setAlreadyTriggered(true)
-
+            // Mark hit using a ref — avoids stale closure issues entirely
+            hitRef.current = true;
         },
-        args: [1, 1, 8],
+        args: [0.5, 0.5, 8],
         position: props.position,
         userData: {
             isObstacle: true,
-            // id: obstacle.id
+            obstacleId: props.id
         }
     }))
 
     useEffect(() => {
 
         api.position.set(...props.position)
+
+        // When ring crosses z=0 it has just passed the player — lock in hit or miss color
+        if (props.position[2] >= 0 && !lockedRef.current) {
+            lockedRef.current = true;
+            setInnerColor(hitRef.current ? 'green' : 'red');
+        }
 
     }, [props.position])
 
@@ -163,10 +164,9 @@ function Ring(props) {
                         <cylinderGeometry args={[0.5, 0.5, 0.25]} />
 
                         <meshStandardMaterial
-                            {...props}
-                            opacity={ringOpacity * 0.5}
+                            opacity={innerColor !== 'gray' ? 0.85 : ringOpacity * 0.5}
                             transparent={true}
-                            color="gray"
+                            color={innerColor}
                         />
 
                         {/* {((Math.abs(props.position[2]) - zPosition.toFixed(0)) < 100) &&
@@ -228,7 +228,10 @@ function Rings(props) {
 
     useFrame(() => {
 
-        let newObstacles = obstacles.map((obstacle) => ({
+        // Use getState() to always read the latest obstacles, avoiding stale closure overwriting hit flags
+        const currentObstacles = useGameStore.getState().obstacles;
+
+        let newObstacles = currentObstacles.map((obstacle) => ({
             ...obstacle,
             position: [obstacle.position[0], obstacle.position[1], obstacle.position[2] + 0.1], // Move toward the player
         }))
@@ -237,7 +240,7 @@ function Rings(props) {
         newObstacles = newObstacles.filter((obstacle) => obstacle.position[2] <= 10);
 
         // Add new obstacles to maintain the array length
-        while (newObstacles.length < obstacles.length) {
+        while (newObstacles.length < currentObstacles.length) {
             const lastObstacle = newObstacles[newObstacles.length - 1];
             const newPositionZ = lastObstacle ? lastObstacle.position[2] - 10 : -10;
 
@@ -265,6 +268,7 @@ function Rings(props) {
 
                     <Ring
                         // key={i}
+                        id={obstacle.id}
                         position={
                             obstacle.position
                             // [

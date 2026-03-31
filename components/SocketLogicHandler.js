@@ -13,6 +13,7 @@ import { useRouter, usePathname } from 'next/navigation';
 import axios from "axios";
 
 import { useSocketStore } from "@/hooks/useSocketStore";
+import { useStore } from '@/hooks/useStore';
 
 // SocketContextControl
 export default function SocketLogicHandler(props) {
@@ -26,6 +27,9 @@ export default function SocketLogicHandler(props) {
     const connectSocket = useSocketStore((state) => state.connectSocket)
     const disconnectSocket = useSocketStore((state) => state.disconnectSocket)
     const setTotalUsers = useSocketStore((state) => state.setTotalUsers)
+
+    const lobbyDetails = useStore((state) => state.lobbyDetails)
+    const setLobbyDetails = useStore((state) => state.setLobbyDetails)
 
     const connected = useSocketStore((state) => state.connected)
     const setConnected = useSocketStore((state) => state.setConnected)
@@ -127,6 +131,14 @@ export default function SocketLogicHandler(props) {
 
         socket.on('roomsList', (value) => {
             console.log("[📶Socket] roomsList", value);
+        });
+
+        socket.on('game:ocean-rings-landing-details', function (msg) {
+            console.log('game:ocean-rings-landing-details', msg)
+
+            if (JSON.stringify(msg) !== JSON.stringify(lobbyDetails)) {
+                setLobbyDetails(msg)
+            }
         });
 
         socket.emit('getUserCount');

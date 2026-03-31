@@ -49,10 +49,13 @@ export default function LeftPanelContent(props) {
         shift,
         distance,
         score,
-        setDebug,
-        debug
+        // setDebug,
+        // debug
         // touchControls, setTouchControls
     } = useGameStore()
+
+    const debug = useStore(state => state.debug)
+    const setDebug = useStore(state => state.setDebug)
 
     return (
         <div className='w-100'>
@@ -182,7 +185,7 @@ export default function LeftPanelContent(props) {
             </div>
 
             {/* Touch Controls */}
-            <div
+            {/* <div
                 className="card card-articles card-sm"
             >
                 <div className="card-body">
@@ -220,7 +223,7 @@ export default function LeftPanelContent(props) {
                     </div>
 
                 </div>
-            </div>
+            </div> */}
 
             {/* Debug Controls */}
             <div

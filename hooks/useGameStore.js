@@ -1,6 +1,6 @@
 // import { create } from 'zustand'
 import { createWithEqualityFn as create } from 'zustand/traditional'
-import { generateRandomFishNickname } from '../util/generateRandomFishNickname'
+// import { generateRandomFishNickname } from '../util/generateRandomFishNickname'
 
 const assets_src = 'games/Ocean Rings/'
 
@@ -34,12 +34,12 @@ export const useGameStore = create((set) => ({
         }))
     },
 
-    debug: false,
-    setDebug: (newValue) => {
-        set((prev) => ({
-            debug: newValue
-        }))
-    },
+    // debug: false,
+    // setDebug: (newValue) => {
+    //     set((prev) => ({
+    //         debug: newValue
+    //     }))
+    // },
 
     score: 0,
     setScore: (newValue) => {

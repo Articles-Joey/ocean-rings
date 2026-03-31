@@ -15,8 +15,8 @@ import { useLocalStorageNew } from '@/hooks/useLocalStorageNew';
 import IsDev from '@/components/UI/IsDev';
 // import { ChromePicker } from 'react-color';
 import { useSocketStore } from '@/hooks/useSocketStore';
-import { useGameStore } from '@/hooks/useGameStore';
-import { generateRandomFishNickname } from '@/util/generateRandomFishNickname';
+// import { useGameStore } from '@/hooks/useGameStore';
+// import { generateRandomFishNickname } from '@/util/generateRandomFishNickname';
 import { useStore } from '@/hooks/useStore';
 
 // import LandingBackgroundAnimation from '@/components/Game/LandingBackgroundAnimation';
@@ -30,19 +30,24 @@ const GameScoreboard = dynamic(() => import('@/components/UI/GameScoreboard'), {
     ssr: false,
 });
 
+const ReturnToLauncherButton = dynamic(() =>
+    import('@articles-media/articles-dev-box/ReturnToLauncherButton'),
+    { ssr: false }
+);
+
 // const Ad = dynamic(() => import('components/Ads/Ad'), {
 //     ssr: false,
 // });
 
-const InfoModal = dynamic(
-    () => import('@/components/UI/InfoModal'),
-    { ssr: false }
-)
+// const InfoModal = dynamic(
+//     () => import('@/components/UI/InfoModal'),
+//     { ssr: false }
+// )
 
-const SettingsModal = dynamic(
-    () => import('@/components/UI/SettingsModal'),
-    { ssr: false }
-)
+// const SettingsModal = dynamic(
+//     () => import('@/components/UI/SettingsModal'),
+//     { ssr: false }
+// )
 
 // const PrivateGameModal = dynamic(
 //     () => import('@/components/UI/PrivateGameModal'),
@@ -54,15 +59,15 @@ const Viewer = dynamic(
     { ssr: false }
 )
 
-const Clownfish = dynamic(
-    () => import('@/components/PlayerModels/Clownfish'),
-    { ssr: false }
-)
+// const Clownfish = dynamic(
+//     () => import('@/components/PlayerModels/Clownfish'),
+//     { ssr: false }
+// )
 
-const BoneFish = dynamic(
-    () => import('@/components/PlayerModels/BoneFish'),
-    { ssr: false }
-)
+// const BoneFish = dynamic(
+//     () => import('@/components/PlayerModels/BoneFish'),
+//     { ssr: false }
+// )
 
 const assets_src = 'games/Ocean Rings/'
 
@@ -84,19 +89,26 @@ export default function OceanRingsGameLandingPage() {
     const setNickname = useStore((state) => state.setNickname);
     const randomNickname = useStore((state) => state.randomNickname);
 
-    const landingBackgroundAnimation = useStore((state) => state.landingBackgroundAnimation);
+    const landingAnimation = useStore((state) => state.landingAnimation);
+
+    const setShowCreditsModal = useStore((state) => state.setShowCreditsModal);
+    const setShowInfoModal = useStore((state) => state.setShowInfoModal);
+    const setShowSettingsModal = useStore((state) => state.setShowSettingsModal);
 
     const darkMode = useStore((state) => state.darkMode);
     const setDarkMode = useStore((state) => state.setDarkMode);
 
-    const [showInfoModal, setShowInfoModal] = useState(false)
-    const [showSettingsModal, setShowSettingsModal] = useState(false)
+    // const [showInfoModal, setShowInfoModal] = useState(false)
+    // const [showSettingsModal, setShowSettingsModal] = useState(false)
     const [showPrivateGameModal, setShowPrivateGameModal] = useState(false)
 
-    const [lobbyDetails, setLobbyDetails] = useState({
-        players: [],
-        games: [],
-    })
+    // const [lobbyDetails, setLobbyDetails] = useState({
+    //     players: [],
+    //     games: [],
+    // })
+
+    const lobbyDetails = useStore((state) => state.lobbyDetails)
+    const setLobbyDetails = useStore((state) => state.setLobbyDetails)
 
     // const [character, setCharacter] = useLocalStorageNew("game:ocean-rings:character", {
     //     model: 'Clownfish',
@@ -168,29 +180,8 @@ export default function OceanRingsGameLandingPage() {
 
         <div className="ocean-rings-landing-page">
 
-            {showInfoModal &&
-                <InfoModal
-                    show={showInfoModal}
-                    setShow={setShowInfoModal}
-                />
-            }
-
-            {showSettingsModal &&
-                <SettingsModal
-                    show={showSettingsModal}
-                    setShow={setShowSettingsModal}
-                />
-            }
-
-            {/* {showPrivateGameModal &&
-                <PrivateGameModal
-                    show={showPrivateGameModal}
-                    setShow={setShowPrivateGameModal}
-                />
-            } */}
-
             <div className='background-wrap'>
-                {landingBackgroundAnimation ?
+                {landingAnimation ?
                     <LandingBackgroundAnimation />
                     :
                     <Image
@@ -353,279 +344,280 @@ export default function OceanRingsGameLandingPage() {
                 }
 
                 {!characterEdit &&
-                    <div
-                        className="card card-articles card-sm mb-3 mb-lg-0"
-                        style={{ "width": "20rem" }}
-                    >
+                    <div>
+                        <div
+                            className="card card-articles card-sm mb-3"
+                            style={{ "width": "20rem" }}
+                        >
 
-                        {/* <div style={{ position: 'relative', height: '200px' }}>
-                        <Image
-                            src={Logo}
-                            alt=""
-                            fill
-                            style={{ objectFit: 'cover' }}
-                        />
-                    </div> */}
-
-                        <div className='card-header d-flex align-items-center'>
-
-                            <div className='flex-shrink-0 me-2'>
-
-                                <div style={{ width: '50px', height: '50px' }} >
-                                    <div
-                                        className="ratio ratio-1x1 mb-1"
-
-                                    >
-                                        <div>
-                                            <Viewer scale={13}>
-                                                {characters?.find(item => item.name == character.model)?.model}
-                                            </Viewer>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <ArticlesButton
-                                    small
-                                    className="w-100"
-                                    onClick={() => {
-                                        setCharacterEdit(true)
-                                    }}
-                                >
-                                    Edit
-                                </ArticlesButton>
-
-                            </div>
-
-                            <div className="flex-grow-1">
-
-                                <div className="form-group articles mb-0">
-                                    <label htmlFor="nickname">Nickname</label>
-                                    {/* <SingleInput
-                                        value={nickname}
-                                        setValue={setNickname}
-                                        noMargin
-                                    /> */}
-                                    <div className="d-flex align-items-center">
-                                        <input
-                                            type="text"
-                                            value={nickname}
-                                            onChange={(e) => {
-                                                setNickname(e.target.value)
-                                            }}
-                                            className={`form-control form-control-sm`}
-                                        />
-                                        <ArticlesButton
-                                            small
-                                            className="ms-2"
-                                            onClick={() => {
-                                                setNickname(generateRandomFishNickname())
-                                            }}
-                                        >
-                                            <i className="fad fa-random"></i>
-                                        </ArticlesButton>
-                                    </div>
-                                </div>
-
-                                <div className='mt-1' style={{ fontSize: '0.8rem' }}>Visible to all players</div>
-
-                            </div>
-                        </div>
-
-                        <div className="card-body">
-
-                            <Link
-                                href={{
-                                    pathname: `/play`
-                                    // query: {
-                                    //     server: id
-                                    // }
-                                }}
-                            >
-                                <ArticlesButton
-                                    className="mb-3 w-100"
-                                    small
-                                >
-                                    Play Single Player
-                                </ArticlesButton>
-                            </Link>
-
-                            <div className="fw-bold mb-1 small text-center">
-                                {lobbyDetails.players.length || 0} player{lobbyDetails.players.length > 1 && 's'} in the lobby.
-                            </div>
-
-                            {/* <div className='small fw-bold'>Public Servers</div> */}
-
-                            <div className="servers">
-
-                                {[1, 2, 3, 4].map(id => {
-
-                                    let lobbyLookup = lobbyDetails?.fourFrogsGlobalState?.games?.find(lobby =>
-                                        parseInt(lobby.server_id) == id
-                                    )
-
-                                    return (
-                                        <div key={id} className="server">
-
-                                            <div className='d-flex justify-content-between align-items-center w-100 mb-2'>
-                                                <div className="mb-0" style={{ fontSize: '0.9rem' }}><b>Server {id}</b></div>
-                                                <div className='mb-0'>{lobbyLookup?.players?.length || 0}/4</div>
-                                            </div>
-
-                                            <div className='d-flex justify-content-around w-100 mb-1'>
-                                                {[1, 2, 3, 4].map(player_count => {
-
-                                                    let playerLookup = false
-
-                                                    if (lobbyLookup?.players?.length >= player_count) playerLookup = true
-
-                                                    return (
-                                                        <div key={player_count} className="icon" style={{
-                                                            width: '20px',
-                                                            height: '20px',
-                                                            ...(playerLookup ? {
-                                                                backgroundColor: 'black',
-                                                            } : {
-                                                                backgroundColor: 'gray',
-                                                            }),
-                                                            border: '1px solid black'
-                                                        }}>
-
-                                                        </div>
-                                                    )
-                                                })}
-                                            </div>
-
-                                            <Link
-                                                className={``}
-                                                href={{
-                                                    pathname: `/play`,
-                                                    query: {
-                                                        server: id
-                                                    }
-                                                }}
-                                            >
-                                                <ArticlesButton
-                                                    className="px-5"
-                                                    small
-                                                >
-                                                    Join
-                                                </ArticlesButton>
-                                            </Link>
-
-                                        </div>
-                                    )
-                                })}
-
-                            </div>
-
-                            <div className='small fw-bold  mt-3 mb-1'>Or</div>
-
-                            {/* <div className='d-flex'>
-
-                            <ArticlesButton
-                                className={`w-50`}
-                                onClick={() => {
-                                    // TODO
-                                    alert("Coming Soon!")
-                                }}
-                            >
-                                <i className="fad fa-robot"></i>
-                                Practice
-                            </ArticlesButton>
-
-                            <ArticlesButton
-                                className={`w-50`}
-                                onClick={() => {
-                                    setShowPrivateGameModal(prev => !prev)
-                                }}
-                            >
-                                <i className="fad fa-lock"></i>
-                                Private Game
-                            </ArticlesButton>
-
+                            {/* <div style={{ position: 'relative', height: '200px' }}>
+                            <Image
+                                src={Logo}
+                                alt=""
+                                fill
+                                style={{ objectFit: 'cover' }}
+                            />
                         </div> */}
 
-                            <IsDev className={'mt-3'}>
-                                <div>
+                            <div className='card-header d-flex align-items-center'>
+
+                                <div className='flex-shrink-0 me-2'>
+
+                                    <div style={{ width: '50px', height: '50px' }} >
+                                        <div
+                                            className="ratio ratio-1x1 mb-1"
+
+                                        >
+                                            <div>
+                                                <Viewer scale={13}>
+                                                    {characters?.find(item => item.name == character.model)?.model}
+                                                </Viewer>
+                                            </div>
+                                        </div>
+                                    </div>
+
                                     <ArticlesButton
-                                        className="w-50"
-                                        variant='warning'
+                                        small
+                                        className="w-100"
                                         onClick={() => {
-                                            socket.emit('game:ocean-rings:reset', '');
+                                            setCharacterEdit(true)
                                         }}
                                     >
-                                        Reset Server
+                                        Edit
                                     </ArticlesButton>
+
                                 </div>
-                            </IsDev>
 
-                        </div>
+                                <div className="flex-grow-1">
 
-                        <div className="card-footer d-flex flex-wrap justify-content-center">
+                                    <div className="form-group articles mb-0">
+                                        <label htmlFor="nickname">Nickname</label>
+                                        {/* <SingleInput
+                                            value={nickname}
+                                            setValue={setNickname}
+                                            noMargin
+                                        /> */}
+                                        <div className="d-flex align-items-center">
+                                            <input
+                                                type="text"
+                                                value={nickname}
+                                                onChange={(e) => {
+                                                    setNickname(e.target.value)
+                                                }}
+                                                className={`form-control form-control-sm`}
+                                            />
+                                            <ArticlesButton
+                                                small
+                                                className=""
+                                                onClick={() => {
+                                                    randomNickname()
+                                                }}
+                                            >
+                                                <i className="fad fa-random"></i>
+                                            </ArticlesButton>
+                                        </div>
+                                    </div>
 
-                            <ArticlesButton
-                                className={`w-50`}
-                                small
-                                onClick={() => {
-                                    setShowSettingsModal(prev => !prev)
-                                }}
-                            >
-                                <i className="fad fa-cog"></i>
-                                Settings
-                            </ArticlesButton>
+                                    <div className='mt-1' style={{ fontSize: '0.8rem' }}>Visible to all players</div>
 
-                            <ArticlesButton
-                                className={`w-50`}
-                                small
-                                onClick={() => {
-                                    setShowInfoModal({
-                                        game: game_name
-                                    })
-                                }}
-                            >
-                                <i className="fad fa-info-square"></i>
-                                Rules & Controls
-                            </ArticlesButton>
+                                </div>
+                                
+                            </div>
 
-                            <Link href={'https://github.com/Articles-Joey/ocean-rings'} className='w-50' target="_blank" rel="noopener noreferrer">
-                                <ArticlesButton
-                                    className={`w-100`}
-                                    small
-                                    onClick={() => {
+                            <div className="card-body">
 
+                                <Link
+                                    href={{
+                                        pathname: `/play`
+                                        // query: {
+                                        //     server: id
+                                        // }
                                     }}
                                 >
-                                    <i className="fab fa-github"></i>
-                                    Github
+                                    <ArticlesButton
+                                        className="mb-3 w-100"
+                                        small
+                                    >
+                                        Play Single Player
+                                    </ArticlesButton>
+                                </Link>
+
+                                <div className="fw-bold mb-1 small text-center">
+                                    {lobbyDetails.players.length || 0} player{lobbyDetails.players.length !== 1 && 's'} in the lobby.
+                                </div>
+
+                                {/* <div className='small fw-bold'>Public Servers</div> */}
+
+                                <div className="servers">
+
+                                    {[1, 2, 3, 4].map(id => {
+
+                                        let lobbyLookup = lobbyDetails?.fourFrogsGlobalState?.games?.find(lobby =>
+                                            parseInt(lobby.server_id) == id
+                                        )
+
+                                        return (
+                                            <div key={id} className="server">
+
+                                                <div className='d-flex justify-content-between align-items-center w-100 mb-2'>
+                                                    <div className="mb-0" style={{ fontSize: '0.9rem' }}><b>Server {id}</b></div>
+                                                    <div className='mb-0'>{lobbyLookup?.players?.length || 0}/4</div>
+                                                </div>
+
+                                                <div className='d-flex justify-content-around w-100 mb-1'>
+                                                    {[1, 2, 3, 4].map(player_count => {
+
+                                                        let playerLookup = false
+
+                                                        if (lobbyLookup?.players?.length >= player_count) playerLookup = true
+
+                                                        return (
+                                                            <div key={player_count} className="icon" style={{
+                                                                width: '20px',
+                                                                height: '20px',
+                                                                ...(playerLookup ? {
+                                                                    backgroundColor: 'black',
+                                                                } : {
+                                                                    backgroundColor: 'gray',
+                                                                }),
+                                                                border: '1px solid black'
+                                                            }}>
+
+                                                            </div>
+                                                        )
+                                                    })}
+                                                </div>
+
+                                                <Link
+                                                    className={``}
+                                                    href={{
+                                                        pathname: `/play`,
+                                                        query: {
+                                                            server: id
+                                                        }
+                                                    }}
+                                                >
+                                                    <ArticlesButton
+                                                        className="px-5"
+                                                        small
+                                                    >
+                                                        Join
+                                                    </ArticlesButton>
+                                                </Link>
+
+                                            </div>
+                                        )
+                                    })}
+
+                                </div>
+
+                                {/* <div className='small fw-bold  mt-3 mb-1'>Or</div> */}
+
+                                {/* <div className='d-flex'>
+    
+                                <ArticlesButton
+                                    className={`w-50`}
+                                    onClick={() => {
+                                        // TODO
+                                        alert("Coming Soon!")
+                                    }}
+                                >
+                                    <i className="fad fa-robot"></i>
+                                    Practice
                                 </ArticlesButton>
-                            </Link>
+    
+                                <ArticlesButton
+                                    className={`w-50`}
+                                    onClick={() => {
+                                        setShowPrivateGameModal(prev => !prev)
+                                    }}
+                                >
+                                    <i className="fad fa-lock"></i>
+                                    Private Game
+                                </ArticlesButton>
+    
+                            </div> */}
 
-                            <ArticlesButton
-                                className={`w-50`}
-                                small
-                                onClick={() => {
-                                    setShowInfoModal({
-                                        game: game_name
-                                    })
-                                }}
-                            >
-                                <i className="fad fa-users"></i>
-                                Credits
-                            </ArticlesButton>
+                                <IsDev className={'mt-3'}>
+                                    <div>
+                                        <ArticlesButton
+                                            className="w-50"
+                                            variant='warning'
+                                            onClick={() => {
+                                                socket.emit('game:ocean-rings:reset', '');
+                                            }}
+                                        >
+                                            Reset Server
+                                        </ArticlesButton>
+                                    </div>
+                                </IsDev>
 
-                            <ArticlesButton
-                                className={`w-50`}
-                                small
-                                onClick={() => {
-                                    setDarkMode(!darkMode);
-                                }}
-                                active={darkMode}
-                            >
-                                <i className="fad fa-palette"></i>
-                                Dark Mode
-                            </ArticlesButton>
+                            </div>
+
+                            <div className="card-footer d-flex flex-wrap justify-content-center">
+
+                                <div className='d-flex w-50'>
+                                    <ArticlesButton
+                                        className={`w-100`}
+                                        small
+                                        onClick={() => {
+                                            setShowSettingsModal(true)
+                                        }}
+                                    >
+                                        <i className="fad fa-cog"></i>
+                                        Settings
+                                    </ArticlesButton>
+                                    <ArticlesButton
+                                        className={``}
+                                        small
+                                        onClick={() => {
+                                            setDarkMode(!darkMode);
+                                        }}
+                                    >
+                                        <i className="fad fa-palette"></i>
+                                    </ArticlesButton>
+                                </div>
+
+                                <ArticlesButton
+                                    className={`w-50`}
+                                    small
+                                    onClick={() => {
+                                        setShowInfoModal(true)
+                                    }}
+                                >
+                                    <i className="fad fa-info-square"></i>
+                                    Info
+                                </ArticlesButton>
+
+                                <Link href={'https://github.com/Articles-Joey/ocean-rings'} className='w-50' target="_blank" rel="noopener noreferrer">
+                                    <ArticlesButton
+                                        className={`w-100`}
+                                        small
+                                        onClick={() => {
+
+                                        }}
+                                    >
+                                        <i className="fab fa-github"></i>
+                                        Github
+                                    </ArticlesButton>
+                                </Link>
+
+                                <ArticlesButton
+                                    className={`w-50`}
+                                    small
+                                    onClick={() => {
+                                        setShowCreditsModal(true);
+                                    }}
+                                >
+                                    <i className="fad fa-users"></i>
+                                    Credits
+                                </ArticlesButton>
+
+                            </div>
 
                         </div>
+
+                        <ReturnToLauncherButton />
 
                     </div>
                 }

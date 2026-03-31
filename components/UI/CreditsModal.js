@@ -35,7 +35,7 @@ export default function CreditsModal({
             >
 
                 <Modal.Header closeButton>
-                    <Modal.Title>Game Credits</Modal.Title>
+                    <Modal.Title>Credits</Modal.Title>
                 </Modal.Header>
 
                 <Modal.Body className="flex-column p-3">
@@ -49,7 +49,7 @@ export default function CreditsModal({
 
                     <div>Attributions:</div>
                     <a
-                        href="https://github.com/Articles-Joey/tag/blob/main/README.md"
+                        href="https://github.com/Articles-Joey/ocean-rings/blob/main/README.md"
                         target="_blank"
                         rel="noopener noreferrer"
                     >

@@ -1,19 +1,33 @@
-import { Canvas, useThree } from '@react-three/fiber';
+import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { Debug, Physics } from '@react-three/cannon';
 import { Center, Image, OrbitControls, Plane, Sky, Text, Text3D } from '@react-three/drei'
-
-import Player from './Player';
-// import RainbowCube from './RainbowCube';
-// import generateRandomInteger from 'util/generateRandomInteger';
-// import OneWayPlatform from './Platforms/OneWayPlatform';
-import { memo, useMemo } from 'react';
+import { memo, useMemo, useRef } from 'react';
 // import MovingPlatform from './Platforms/MovingPlatform';
-import { useGameStore } from '@/hooks/useGameStore';
+// import { useGameStore } from '@/hooks/useGameStore';
 // import Bounds from './Bounds';
+import Player from './Player';
 import Rings from './Rings';
 // import getRandomHexColor from 'util/getRandomHexColor';
 import Decorations from './Decorations';
 import OceanSurface from './OceanSurface';
+import { useStore } from '@/hooks/useStore';
+
+const TARGET = [0, 1, 0];
+const CAM_Y = 5;
+const CAM_Z = 20;
+const SWING_RANGE = 3;   // units left/right from center
+const SWING_SPEED = 0.3; // radians per second
+
+function LandingCamera() {
+    const { camera } = useThree();
+    useFrame(({ clock }) => {
+        camera.position.x = Math.sin(clock.elapsedTime * SWING_SPEED) * SWING_RANGE;
+        camera.position.y = CAM_Y;
+        camera.position.z = CAM_Z;
+        camera.lookAt(...TARGET);
+    });
+    return null;
+}
 
 function GameCanvas({
     landingAnimation
@@ -38,11 +52,13 @@ function GameCanvas({
 
     // const { playerLocation } = useGameStore()
 
-    const {
-        debug,
-    } = useGameStore(state => ({
-        debug: state.debug,
-    }));
+    // const {
+    //     debug,
+    // } = useGameStore(state => ({
+    //     debug: state.debug,
+    // }));
+
+    const debug = useStore(state => state.debug)
 
     let gameContent = (
         <>
@@ -51,11 +67,11 @@ function GameCanvas({
 
             <Rings />
 
-            <Player
-                position={[0, 1, 0]}
-            />
-
-            <Decorations position={[0, 0, 0]} />
+            {!landingAnimation &&
+                <Player
+                    position={[0, 1, 0]}
+                />
+            }
 
         </>
     )
@@ -102,8 +118,11 @@ function GameCanvas({
             </Physics>
 
             <OrbitControls
-                target={[0, 1, 0]}
+                target={TARGET}
+                enabled={!landingAnimation}
             />
+
+            {landingAnimation && <LandingCamera />}
 
         </Canvas>
     )

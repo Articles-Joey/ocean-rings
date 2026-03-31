@@ -21,7 +21,7 @@ export const useAudioStore = create()(
 
     }),
     {
-      name: 'carousel-of-progress-audio', // name of the item in the storage (must be unique)
+      name: 'audio-store', // name of the item in the storage (must be unique)
       version: 1,
       onRehydrateStorage: () => (state) => {
         state.setHasHydrated(true)

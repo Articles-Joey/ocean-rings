@@ -13,6 +13,7 @@ import ClownfishModel from "@/components/PlayerModels/Clownfish"
 import BoneFishModel from "@/components/PlayerModels/BoneFish"
 import { useLocalStorageNew } from "@/hooks/useLocalStorageNew"
 import Shadow from "./Shadow"
+import { useStore } from "@/hooks/useStore"
 
 const JUMP_FORCE = 6;
 const SPEED = 4;
@@ -37,8 +38,10 @@ function PlayerBase(props) {
         shift, setShift,
         addDistance,
         addScore,
-        debug
+        // debug
     } = useGameStore()
+
+    const debug = useStore(state => state.debug)
 
     const {
         touchControls, setTouchControls
