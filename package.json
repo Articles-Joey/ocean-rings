@@ -10,8 +10,8 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@articles-media/articles-dev-box": "^1.0.17",
-    "@articles-media/articles-gamepad-helper": "^0.0.11",
+    "@articles-media/articles-dev-box": "^1.0.24",
+    "@articles-media/articles-gamepad-helper": "^0.0.12",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
     "@mui/icons-material": "^7.3.6",
@@ -24,7 +24,7 @@
     "bootstrap": "^5.3.7",
     "classnames": "^2.5.1",
     "date-fns": "^4.1.0",
-    "next": "^16.2.1",
+    "next": "^16.2.2",
     "nipplejs": "^0.10.2",
     "react": "^19.2.4",
     "react-bootstrap": "^2.10.10",
@@ -33,13 +33,13 @@
     "react-hotkeys-hook": "^5.1.0",
     "sass": "^1.95.0",
     "socket.io-client": "^4.8.1",
-    "swr": "^2.3.6",
+    "swr": "^2.4.1",
     "three": "^0.178.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "babel-plugin-react-compiler": "^1.0.0",
     "eslint": "^10",
-    "eslint-config-next": "^16.2.1"
+    "eslint-config-next": "^16.2.2"
   }
 }

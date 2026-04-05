@@ -9,7 +9,9 @@ import ArticlesButton from "@/components/UI/Button";
 import ControllerPreview from '@/components/UI/ControllerPreview';
 
 import { useSocketStore } from "@/hooks/useSocketStore";
+
 import useFullscreen from "@/hooks/useFullScreen";
+
 import { useStore } from "@/hooks/useStore";
 
 export default function LeftPanelContent(props) {
@@ -115,7 +117,7 @@ export default function LeftPanelContent(props) {
                             if (isFullscreen) {
                                 exitFullscreen()
                             } else {
-                                requestFullscreen('ocean-rings-game-page')
+                                requestFullscreen()
                             }
                         }}
                     >
@@ -135,7 +137,7 @@ export default function LeftPanelContent(props) {
                         <span>Settings</span>
                     </ArticlesButton>
 
-                     <ArticlesButton
+                    <ArticlesButton
                         small
                         className='w-50'
                         active={sidebar}

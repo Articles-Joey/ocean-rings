@@ -18,7 +18,7 @@ import { useControllerStore } from '@/hooks/useControllerStore';
 import { useGameStore } from '@/hooks/useGameStore';
 // import { Dropdown, DropdownButton } from 'react-bootstrap';
 import TouchControls from '@/components/UI/TouchControls';
-import { useLocalStorageNew } from '@/hooks/useLocalStorageNew';
+// import { useLocalStorageNew } from '@/hooks/useLocalStorageNew';
 import LeftPanelContent from '@/components/UI/LeftPanel';
 import { useSocketStore } from '@/hooks/useSocketStore';
 import AudioHandler from '@/components/Game/AudioHandler';
@@ -202,8 +202,8 @@ export default function OceanRingsGamePage() {
 
     const [showMenu, setShowMenu] = useState(false)
 
-    // const [touchControlsEnabled, setTouchControlsEnabled] = useState(false)
-    const [touchControlsEnabled, setTouchControlsEnabled] = useLocalStorageNew("game:touchControlsEnabled", false)
+    const [touchControlsEnabled, setTouchControlsEnabled] = useState(false)
+    // const [touchControlsEnabled, setTouchControlsEnabled] = useLocalStorageNew("game:touchControlsEnabled", false)
 
     useEffect(() => {
 

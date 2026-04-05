@@ -19,9 +19,14 @@ const SettingsModal = dynamic(
 )
 
 const CreditsModal = dynamic(
-    () => import('@/components/UI/CreditsModal'),
+    () => import('@articles-media/articles-dev-box/CreditsModal'),
     { ssr: false }
 )
+
+// const CreditsModal = dynamic(
+//     () => import('@/components/UI/CreditsModal'),
+//     { ssr: false }
+// )
 
 export default function GlobalClientModals() {
 
@@ -90,6 +95,8 @@ export default function GlobalClientModals() {
                 <CreditsModal
                     show={showCreditsModal}
                     setShow={setShowCreditsModal}
+                    owner="Articles-Joey"
+                    repo="ocean-rings"
                 />
             }
         </>

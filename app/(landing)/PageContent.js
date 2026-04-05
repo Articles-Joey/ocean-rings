@@ -19,6 +19,9 @@ import { useSocketStore } from '@/hooks/useSocketStore';
 // import { generateRandomFishNickname } from '@/util/generateRandomFishNickname';
 import { useStore } from '@/hooks/useStore';
 
+import useUserDetails from '@articles-media/articles-dev-box/useUserDetails';
+import useUserToken from '@articles-media/articles-dev-box/useUserToken';
+
 // import LandingBackgroundAnimation from '@/components/Game/LandingBackgroundAnimation';
 
 const LandingBackgroundAnimation = dynamic(() => import('@/components/Game/LandingBackgroundAnimation'), {
@@ -26,9 +29,17 @@ const LandingBackgroundAnimation = dynamic(() => import('@/components/Game/Landi
     loading: () => <p>Loading...</p>
 });
 
-const GameScoreboard = dynamic(() => import('@/components/UI/GameScoreboard'), {
-    ssr: false,
-});
+// const GameScoreboard = dynamic(() => import('@/components/UI/GameScoreboard'), {
+//     ssr: false,
+// });
+const GameScoreboard = dynamic(() =>
+    import('@articles-media/articles-dev-box/GameScoreboard'),
+    { ssr: false }
+);
+const Ad = dynamic(() =>
+    import('@articles-media/articles-dev-box/Ad'),
+    { ssr: false }
+);
 
 const ReturnToLauncherButton = dynamic(() =>
     import('@articles-media/articles-dev-box/ReturnToLauncherButton'),
@@ -84,6 +95,23 @@ export default function OceanRingsGameLandingPage() {
 
     // const userReduxState = useSelector((state) => state.auth.user_details)
     const userReduxState = false
+    const {
+        data: userToken,
+        error: userTokenError,
+        isLoading: userTokenLoading,
+        mutate: userTokenMutate
+    } = useUserToken(
+        "3022"
+    );
+
+    const {
+        data: userDetails,
+        error: userDetailsError,
+        isLoading: userDetailsLoading,
+        mutate: userDetailsMutate
+    } = useUserDetails({
+        token: userToken
+    });
 
     const nickname = useStore((state) => state.nickname);
     const setNickname = useStore((state) => state.setNickname);
@@ -193,11 +221,11 @@ export default function OceanRingsGameLandingPage() {
                 }
             </div>
 
-            <div className="container d-flex flex-column-reverse flex-lg-row justify-content-center align-items-center">
+            <div className="container py-3 d-flex flex-column-reverse flex-lg-row justify-content-center align-items-center">
 
-                <GameScoreboard
+                {/* <GameScoreboard
                     game="Ocean Rings"
-                />
+                /> */}
 
                 {characterEdit &&
                     <div
@@ -623,6 +651,21 @@ export default function OceanRingsGameLandingPage() {
                 }
 
                 {/* <Ad section={"Games"} section_id={game_name} /> */}
+                <GameScoreboard
+                    game={game_name}
+                    style="Default"
+                    darkMode={darkMode ? true : false}
+                />
+
+                <Ad
+                    style="Default"
+                    section={"Games"}
+                    section_id={game_name}
+                    darkMode={darkMode ? true : false}
+                    user_ad_token={userToken}
+                    userDetails={userDetails}
+                    userDetailsLoading={userDetailsLoading}
+                />
 
             </div>
         </div>
