@@ -2,9 +2,9 @@ import useSWR from "swr";
 
 // import { useSelector, useDispatch } from 'react-redux';
 
-import axios from "axios";
+// import axios from "axios";
 
-const fetcher = (url) => axios.get(url).then((res) => res.data);
+const fetcher = url => fetch(url).then(r => r.json())
 
 const useUserFriends = () => {
 

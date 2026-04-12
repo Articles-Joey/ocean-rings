@@ -59,6 +59,7 @@ function GameCanvas({
     // }));
 
     const debug = useStore(state => state.debug)
+    const darkMode = useStore(state => state.darkMode)
 
     let gameContent = (
         <>
@@ -105,7 +106,7 @@ function GameCanvas({
             <fog attach="fog" args={['#215776', 10, 50]} />
 
             {/* Add your 3D scene components here */}
-            <ambientLight intensity={2} />
+            <ambientLight intensity={darkMode ? 1 : 2} />
             {/* <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} />
             <pointLight position={[-10, -10, -10]} /> */}
 

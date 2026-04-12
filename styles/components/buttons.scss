@@ -5,8 +5,8 @@
 
 [data-theme='Dark'], [data-bs-theme='dark'] {
     .btn-articles {
-        background-color: var(--articles-secondary-color);
-        background-color: rgb(70, 70, 70);
+        // background-color: var(--articles-secondary-color);
+        // background-color: rgb(70, 70, 70);
         color: white;
         border-left-color: rgb(29, 29, 29);
         border-right-color: rgb(29, 29, 29);
@@ -83,9 +83,12 @@
 
 .btn-articles {
     color: #212529;
-    background-color: #fff;
+    // background-color: #fff;
+    background-color: rgba(4, 30, 109, 0.5);
+    color: white;
+
     border-color: #ced4da;
-    border-bottom: 3px solid var(--articles-secondary-color);
+    border-bottom: 3px solid red;
 
     &.alt {
         background-color: rgb(0, 0, 0);
@@ -115,6 +118,8 @@
     &.active {
         // background-color: var(--articles-primary-color);
         background-color: var(--articles-secondary-color);
+        background-color: orangered;
+        color: #000;
         border-bottom: 3px solid #000 !important;
     }
 

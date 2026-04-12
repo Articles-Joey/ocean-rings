@@ -17,7 +17,7 @@ export const useStore = create()(
         });
       },
 
-      nickname: null,
+      nickname: generateRandomFishNickname(),
       setNickname: (newValue) => {
         set((prev) => ({
           nickname: newValue
@@ -72,15 +72,13 @@ export const useStore = create()(
           darkMode: newValue
         }))
       },
+      toggleDarkMode: () => set({ darkMode: !get().darkMode }),
 
       updateCamera: null,
       setUpdateCamera: (updateCamera) => set({ updateCamera }),
 
       threeDimensional: true, // 'Light' | 'Dark' | null
       setThreeDimensional: (threeDimensional) => set({ threeDimensional }),
-
-      // darkMode: true,
-      // toggleDarkMode: () => set({ darkMode: !get().darkMode }),
 
       showMenu: false,
       setShowMenu: (value) => set({ showMenu: value }),

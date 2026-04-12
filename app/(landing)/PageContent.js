@@ -117,6 +117,8 @@ export default function OceanRingsGameLandingPage() {
     const setNickname = useStore((state) => state.setNickname);
     const randomNickname = useStore((state) => state.randomNickname);
 
+    const _hasHydrated = useStore((state) => state._hasHydrated);
+
     const landingAnimation = useStore((state) => state.landingAnimation);
 
     const setShowCreditsModal = useStore((state) => state.setShowCreditsModal);
@@ -128,7 +130,7 @@ export default function OceanRingsGameLandingPage() {
 
     // const [showInfoModal, setShowInfoModal] = useState(false)
     // const [showSettingsModal, setShowSettingsModal] = useState(false)
-    const [showPrivateGameModal, setShowPrivateGameModal] = useState(false)
+    // const [showPrivateGameModal, setShowPrivateGameModal] = useState(false)
 
     // const [lobbyDetails, setLobbyDetails] = useState({
     //     players: [],
@@ -136,7 +138,7 @@ export default function OceanRingsGameLandingPage() {
     // })
 
     const lobbyDetails = useStore((state) => state.lobbyDetails)
-    const setLobbyDetails = useStore((state) => state.setLobbyDetails)
+    // const setLobbyDetails = useStore((state) => state.setLobbyDetails)
 
     // const [character, setCharacter] = useLocalStorageNew("game:ocean-rings:character", {
     //     model: 'Clownfish',
@@ -428,7 +430,11 @@ export default function OceanRingsGameLandingPage() {
                                         <div className="d-flex align-items-center">
                                             <input
                                                 type="text"
-                                                value={nickname}
+                                                value={_hasHydrated ? nickname : ''}
+                                                disabled={!_hasHydrated}
+                                                id="nickname"
+                                                name="nickname"
+                                                placeholder="Enter your nickname"
                                                 onChange={(e) => {
                                                     setNickname(e.target.value)
                                                 }}

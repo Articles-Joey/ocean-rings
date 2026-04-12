@@ -48,7 +48,7 @@
         bottom: 50px;
         left: 0;
         width: 100%;
-        top: 50px;
+        top: 0px;
         // height: calc(100vh - 50px);
         z-index: 2;
         background-color: rgba(0, 0, 0, 0.75);
@@ -149,6 +149,13 @@
             bottom: 1rem;
 
             background-color: rgba(65, 105, 225, 0.5);
+            background-color: transparent;
+            border: none;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
             color: white !important;
 
             .card {

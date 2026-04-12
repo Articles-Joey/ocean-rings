@@ -10,9 +10,10 @@ import ControllerPreview from '@/components/UI/ControllerPreview';
 
 import { useSocketStore } from "@/hooks/useSocketStore";
 
-import useFullscreen from "@/hooks/useFullScreen";
+import useFullscreen from '@articles-media/articles-dev-box/useFullscreen';
 
 import { useStore } from "@/hooks/useStore";
+// import { Debug } from "@react-three/cannon";
 
 export default function LeftPanelContent(props) {
 
@@ -42,19 +43,21 @@ export default function LeftPanelContent(props) {
     const setSidebar = useStore(state => state.setSidebar)
     const toggleSidebar = useStore(state => state.toggleSidebar)
 
+    const darkMode = useStore(state => state.darkMode)
+    const toggleDarkMode = useStore(state => state.toggleDarkMode)
 
-    const {
-        cameraMode, setCameraMode,
-        teleport, setTeleport,
-        playerLocation, setPlayerLocation,
-        maxHeight, setMaxHeight,
-        shift,
-        distance,
-        score,
-        // setDebug,
-        // debug
-        // touchControls, setTouchControls
-    } = useGameStore()
+    // const {
+    //     cameraMode, setCameraMode,
+    //     teleport, setTeleport,
+    //     playerLocation, setPlayerLocation,
+    //     maxHeight, setMaxHeight,
+    //     shift,
+    //     distance,
+    //     score,
+    //     // setDebug,
+    //     // debug
+    //     // touchControls, setTouchControls
+    // } = useGameStore()
 
     const debug = useStore(state => state.debug)
     const setDebug = useStore(state => state.setDebug)
@@ -64,7 +67,7 @@ export default function LeftPanelContent(props) {
 
             <div className="card card-articles card-sm">
 
-                <div className="card-body">
+                <div className="card-body d-flex flex-wrap">
 
                     {/* Display only if in multiplayer mode */}
                     {/* <div className='flex-header'>
@@ -98,11 +101,11 @@ export default function LeftPanelContent(props) {
 
                     <Link
                         href={'/'}
-                        className=""
+                        className="w-50"
                     >
                         <ArticlesButton
                             small
-                            className='w-50'
+                            className='w-100'
                         >
                             <i className="fad fa-arrow-alt-square-left"></i>
                             <span>Leave Game</span>
@@ -126,7 +129,7 @@ export default function LeftPanelContent(props) {
                         <span>Fullscreen</span>
                     </ArticlesButton>
 
-                    <ArticlesButton
+                    {/* <ArticlesButton
                         small
                         className='w-50'
                         onClick={() => {
@@ -135,7 +138,29 @@ export default function LeftPanelContent(props) {
                     >
                         <i className="fad fa-cog"></i>
                         <span>Settings</span>
-                    </ArticlesButton>
+                    </ArticlesButton> */}
+                    <div className="d-flex w-50">
+                        <ArticlesButton
+                            className={`w-100`}
+                            small
+                            onClick={() => {
+                                setShowSettingsModal(prev => !prev)
+                            }}
+                        >
+                            <i className="fad fa-cog"></i>
+                            Settings
+                        </ArticlesButton>
+                        <ArticlesButton
+                            className={``}
+                            small
+                            onClick={() => {
+                                toggleDarkMode()
+                            }}
+                        >
+                            <i className="fad fa-moon"></i>
+                            {/* Dark Mode */}
+                        </ArticlesButton>
+                    </div>
 
                     <ArticlesButton
                         small
@@ -152,39 +177,7 @@ export default function LeftPanelContent(props) {
                 </div>
             </div>
 
-            <div
-                className="card card-articles card-sm"
-            >
-                <div className="card-body d-flex justify-content-between">
-
-                    <div>
-                        <div className="small fw-bold">playerData:</div>
-                        <div className="small">
-                            <div>X: {playerLocation?.x}</div>
-                            <div>Y: {playerLocation?.y}</div>
-                            {/* <div>Test{playerLocation.y}</div> */}
-                            <div>Z: {playerLocation?.z} {distance.toFixed(2)}</div>
-                            <div>Shift: {shift ? 'True' : 'False'}</div>
-                            <div>Score: {score}</div>
-                        </div>
-                        {/* {JSON.stringify(playerData, undefined, 2)} */}
-                    </div>
-
-                    {/* <div>
-                        <div className="small text-muted">maxHeight</div>
-                        <div>Y: {maxHeight}</div>
-                        <ArticlesButton
-                            small
-                            onClick={() => {
-                                setMaxHeight(playerLocation?.y)
-                            }}
-                        >
-                            Reset
-                        </ArticlesButton>
-                    </div> */}
-
-                </div>
-            </div>
+            <PlayerDataPanel />
 
             {/* Touch Controls */}
             {/* <div
@@ -226,6 +219,110 @@ export default function LeftPanelContent(props) {
 
                 </div>
             </div> */}
+
+            <DebugPanel />
+
+            {controllerState?.connected &&
+                <div className="panel-content-group p-0 text-dark">
+
+                    <div className="p-1 border-bottom border-dark">
+                        <div className="fw-bold" style={{ fontSize: '0.7rem' }}>
+                            {controllerState?.id}
+                        </div>
+                    </div>
+
+                    <div className='p-1'>
+                        <ArticlesButton
+                            small
+                            className="w-100"
+                            active={showControllerState}
+                            onClick={() => {
+                                setShowControllerState(prev => !prev)
+                            }}
+                        >
+                            {showControllerState ? 'Hide' : 'Show'} Controller Preview
+                        </ArticlesButton>
+                    </div>
+
+                    {showControllerState && <div className='p-3'>
+
+                        <ControllerPreview
+                            controllerState={controllerState}
+                            showJSON={true}
+                            showVibrationControls={true}
+                            maxHeight={300}
+                            showPreview={true}
+                        />
+                    </div>}
+
+                </div>
+            }
+
+        </div>
+    )
+
+}
+
+function PlayerDataPanel() {
+
+    const playerLocation = useGameStore(state => state.playerLocation)
+    const score = useGameStore(state => state.score)
+    const distance = useGameStore(state => state.distance)
+    // const shift = useGameStore(state => state.shift)
+
+    return (
+        <div
+            className="card card-articles card-sm"
+        >
+            <div className="card-body d-flex justify-content-between">
+
+                {/* <div> */}
+                    {/* <div className="small fw-bold">playerData:</div> */}
+                    <div className="small d-flex justify-content-between align-items-center w-100">
+
+                        <div className="fw-bold">Score: {score}</div>
+
+                        <div className="d-flex">
+                            <div className="badge bg-black">Distance: {distance.toFixed(0)}</div>
+                            <div className="badge bg-black">X: {playerLocation?.x.toFixed(0)}</div>
+                            <div className="badge bg-black">Y: {playerLocation?.y.toFixed(0)}</div>
+                        </div>
+
+                        {/* <div>Test{playerLocation.y}</div> */}
+                        {/* <div>Z: {playerLocation?.z}</div> */}
+
+                        {/* <div>Shift: {shift ? 'True' : 'False'}</div> */}
+
+                    </div>
+                    {/* {JSON.stringify(playerData, undefined, 2)} */}
+                {/* </div> */}
+
+                {/* <div>
+                        <div className="small text-muted">maxHeight</div>
+                        <div>Y: {maxHeight}</div>
+                        <ArticlesButton
+                            small
+                            onClick={() => {
+                                setMaxHeight(playerLocation?.y)
+                            }}
+                        >
+                            Reset
+                        </ArticlesButton>
+                    </div> */}
+
+            </div>
+        </div>
+    )
+}
+
+function DebugPanel() {
+
+    const debug = useStore(state => state.debug)
+
+    if (!debug) return null;
+
+    return (
+        <>
 
             {/* Debug Controls */}
             <div
@@ -410,44 +507,7 @@ export default function LeftPanelContent(props) {
 
                 </div>
             </div>
-
-            {controllerState?.connected &&
-                <div className="panel-content-group p-0 text-dark">
-
-                    <div className="p-1 border-bottom border-dark">
-                        <div className="fw-bold" style={{ fontSize: '0.7rem' }}>
-                            {controllerState?.id}
-                        </div>
-                    </div>
-
-                    <div className='p-1'>
-                        <ArticlesButton
-                            small
-                            className="w-100"
-                            active={showControllerState}
-                            onClick={() => {
-                                setShowControllerState(prev => !prev)
-                            }}
-                        >
-                            {showControllerState ? 'Hide' : 'Show'} Controller Preview
-                        </ArticlesButton>
-                    </div>
-
-                    {showControllerState && <div className='p-3'>
-
-                        <ControllerPreview
-                            controllerState={controllerState}
-                            showJSON={true}
-                            showVibrationControls={true}
-                            maxHeight={300}
-                            showPreview={true}
-                        />
-                    </div>}
-
-                </div>
-            }
-
-        </div>
+        </>
     )
 
 }

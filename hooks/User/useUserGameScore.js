@@ -2,14 +2,26 @@ import useSWR from "swr";
 
 // import { useSelector, useDispatch } from 'react-redux';
 
-import axios from "axios";
+// import axios from "axios";
 import { minutesToMilliseconds } from "date-fns";
 
-const fetcher = (data) => axios.get(data.url, {
-    params: {
-        game: data.game
+const fetcher = (obj) => {
+    const url = new URL(obj.url, window.location.origin);
+    if (obj.game) {
+        url.searchParams.append("game", obj.game);
     }
-}).then((res) => res.data);
+    return fetch(url.toString(), {
+        method: "GET",
+        credentials: "same-origin",
+        headers: {
+            "Accept": "application/json",
+        },
+    })
+        .then((res) => {
+            if (!res.ok) throw new Error("Network response was not ok");
+            return res.json();
+        });
+};
 
 const useUserGameScore = (params) => {
 
@@ -17,7 +29,7 @@ const useUserGameScore = (params) => {
     const userReduxState = false
 
     const { data, error, isLoading, mutate } = useSWR(
-        ((userReduxState?._id && params.game ) ?
+        ((userReduxState?._id && params.game) ?
             {
                 url: "/api/user/community/games/scoreboard/get",
                 game: `${params.game}`
