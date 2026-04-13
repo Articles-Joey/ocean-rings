@@ -283,9 +283,9 @@ function PlayerDataPanel() {
                         <div className="fw-bold">Score: {score}</div>
 
                         <div className="d-flex">
-                            <div className="badge bg-black">Distance: {distance.toFixed(0)}</div>
-                            <div className="badge bg-black">X: {playerLocation?.x.toFixed(0)}</div>
-                            <div className="badge bg-black">Y: {playerLocation?.y.toFixed(0)}</div>
+                            <div className="badge bg-black">Distance: {distance?.toFixed(0)}</div>
+                            <div className="badge bg-black">X: {playerLocation?.x?.toFixed(0)}</div>
+                            <div className="badge bg-black">Y: {playerLocation?.y?.toFixed(0)}</div>
                         </div>
 
                         {/* <div>Test{playerLocation.y}</div> */}
