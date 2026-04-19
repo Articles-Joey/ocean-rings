@@ -22,13 +22,15 @@ export default function LeftPanelContent(props) {
         players,
         touchControlsEnabled,
         setTouchControlsEnabled,
-        reloadScene,
+        // reloadScene,
         controllerState,
         // isFullscreen,
         // requestFullscreen,
         // exitFullscreen,
         setShowMenu
     } = props;
+
+    const incSceneKey = useStore((state) => state.incSceneKey);
 
     const { isFullscreen, requestFullscreen, exitFullscreen } = useFullscreen();
 
@@ -319,6 +321,16 @@ function DebugPanel() {
 
     const debug = useStore(state => state.debug)
 
+    const setSceneKey = useGameStore((state) => state.setSceneKey);
+    const incSceneKey = useGameStore((state) => state.incSceneKey);
+
+    const cameraMode = useGameStore((state) => state.cameraMode);
+    const setCameraMode = useGameStore((state) => state.setCameraMode);
+
+    const sceneKey = useGameStore((state) => state.sceneKey);
+
+    const setShowMenu = useGameStore((state) => state.setShowMenu);
+
     if (!debug) return null;
 
     return (
@@ -338,7 +350,7 @@ function DebugPanel() {
                             <ArticlesButton
                                 size="sm"
                                 className="w-50"
-                                onClick={reloadScene}
+                                onClick={incSceneKey}
                             >
                                 <i className="fad fa-redo"></i>
                                 Reload Game
@@ -347,7 +359,9 @@ function DebugPanel() {
                             <ArticlesButton
                                 size="sm"
                                 className="w-50"
-                                onClick={reloadScene}
+                                onClick={() => {
+
+                                }}
                             >
                                 <i className="fad fa-redo"></i>
                                 Reset Camera

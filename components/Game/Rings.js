@@ -199,10 +199,14 @@ function Rings(props) {
 
     let yBounds = [2, 5]
 
-    const {
-        obstacles,
-        setObstacles
-    } = useGameStore()
+    // const {
+    //     obstacles,
+    //     setObstacles
+    // } = useGameStore()
+
+    const obstacles = useGameStore(state => state.obstacles)
+    const setObstacles = useGameStore(state => state.setObstacles)
+    const distance = useGameStore(state => state.distance)
 
     // Generate initial obstacles
     useEffect(() => {
@@ -230,11 +234,30 @@ function Rings(props) {
 
         // Use getState() to always read the latest obstacles, avoiding stale closure overwriting hit flags
         const currentObstacles = useGameStore.getState().obstacles;
+        const currentDistance = useGameStore.getState().distance;
 
-        let newObstacles = currentObstacles.map((obstacle) => ({
-            ...obstacle,
-            position: [obstacle.position[0], obstacle.position[1], obstacle.position[2] + 0.1], // Move toward the player
-        }))
+        // Determine horizontal movement probability based on distance
+        const horizontalChance = currentDistance > 100 ? 0.5 : currentDistance > 20 ? 0.25 : 0;
+
+        let newObstacles = currentObstacles.map((obstacle) => {
+            let newX = obstacle.position[0];
+            let newHorizontalSpeed = obstacle.horizontalSpeed || 0;
+
+            if (newHorizontalSpeed !== 0) {
+                newX += newHorizontalSpeed;
+                // Bounce off horizontal bounds
+                if (newX > 2.5 || newX < -2.5) {
+                    newHorizontalSpeed = -newHorizontalSpeed;
+                    newX = Math.max(-2.5, Math.min(2.5, newX));
+                }
+            }
+
+            return {
+                ...obstacle,
+                position: [newX, obstacle.position[1], obstacle.position[2] + 0.1], // Move toward the player
+                horizontalSpeed: newHorizontalSpeed,
+            };
+        });
 
         // Filter out obstacles that went past the player
         newObstacles = newObstacles.filter((obstacle) => obstacle.position[2] <= 10);
@@ -244,15 +267,17 @@ function Rings(props) {
             const lastObstacle = newObstacles[newObstacles.length - 1];
             const newPositionZ = lastObstacle ? lastObstacle.position[2] - 10 : -10;
 
+            const isMoving = Math.random() < horizontalChance;
+            const horizontalSpeed = isMoving ? (Math.random() < 0.5 ? 0.04 : -0.04) : 0;
+
             newObstacles.push({
                 position: [
-                    // Math.random() * 2 - 1, 
-                    // 0, 
                     generateRandomInteger(-1.5, 1.5),
                     generateRandomInteger(yBounds[0], yBounds[1]),
                     newPositionZ
                 ],
                 id: Date.now(), // Ensure unique ID
+                horizontalSpeed,
             });
         }
 

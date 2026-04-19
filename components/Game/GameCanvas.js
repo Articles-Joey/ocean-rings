@@ -1,6 +1,6 @@
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { Debug, Physics } from '@react-three/cannon';
-import { Center, Image, OrbitControls, Plane, Sky, Text, Text3D } from '@react-three/drei'
+import { Center, Image, OrbitControls, Plane, Sky, Stats, Text, Text3D } from '@react-three/drei'
 import { memo, useMemo, useRef } from 'react';
 // import MovingPlatform from './Platforms/MovingPlatform';
 // import { useGameStore } from '@/hooks/useGameStore';
@@ -92,6 +92,8 @@ function GameCanvas({
 
     return (
         <Canvas camera={{ fov: 45, position: [0, 5, 20] }}>
+
+            <Stats />
 
             {/* <color
                 attach="background"

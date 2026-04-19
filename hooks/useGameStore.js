@@ -6,6 +6,18 @@ const assets_src = 'games/Ocean Rings/'
 
 export const useGameStore = create((set) => ({
 
+    sceneKey: 0,
+    setSceneKey: (newValue) => {
+        set((prev) => ({
+            sceneKey: newValue
+        }))
+    },
+    incSceneKey: () => {
+        set((prev) => ({
+            sceneKey: prev.sceneKey + 1
+        }))
+    },
+
     // darkMode: null,
     // setDarkMode: (newValue) => {
     //     set((prev) => ({

@@ -5,9 +5,18 @@
 @use "./pages/game.scss" as *;
 
 button {
-    font-size: 0.75rem!important;
+    font-size: 0.75rem !important;
 }
 
 i {
     margin-right: 0.2rem;
+}
+
+:root, [data-bs-theme=light] {
+    --bs-body-bg: #1a3155;
+    --bs-body-color: white;
+}
+
+:root, [data-bs-theme=dark] {
+    --bs-body-bg: #0d1729;
 }

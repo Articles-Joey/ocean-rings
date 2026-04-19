@@ -22,6 +22,7 @@ import TouchControls from '@/components/UI/TouchControls';
 import LeftPanelContent from '@/components/UI/LeftPanel';
 import { useSocketStore } from '@/hooks/useSocketStore';
 import AudioHandler from '@/components/Game/AudioHandler';
+import { useStore } from '@react-three/fiber';
 
 const GameCanvas = dynamic(() => import('@/components/Game/GameCanvas'), {
     ssr: false,
@@ -428,14 +429,16 @@ export default function OceanRingsGamePage() {
 
     }, []);
 
-    const [sceneKey, setSceneKey] = useState(0);
+    // const [sceneKey, setSceneKey] = useState(0);
+    const sceneKey = useGameStore((state) => state.sceneKey);
+    const setSceneKey = useGameStore((state) => state.setSceneKey);
 
     // Function to handle scene reload
-    const reloadScene = () => {
-        setScore(0)
-        setDistance(0)
-        setSceneKey((prevKey) => prevKey + 1);
-    };
+    // const reloadScene = () => {
+    //     setScore(0)
+    //     setDistance(0)
+    //     setSceneKey((prevKey) => prevKey + 1);
+    // };
 
     const { isFullscreen, requestFullscreen, exitFullscreen } = useFullscreen();
 
@@ -444,7 +447,7 @@ export default function OceanRingsGamePage() {
         players,
         touchControlsEnabled,
         setTouchControlsEnabled,
-        reloadScene,
+        // reloadScene,
         controllerState,
         // isFullscreen,
         // requestFullscreen,
