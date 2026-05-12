@@ -3,18 +3,17 @@ import { useRef } from 'react'
 import { Canvas } from '@react-three/fiber'
 import { OrbitControls, ContactShadows } from '@react-three/drei'
 
-export default function Viewer({ scale, children }) {
+import ClownfishModel from '../PlayerModels/Clownfish'
+import BoneFishModel from '../PlayerModels/BoneFish'
+
+export default function Viewer({ scale, children, model }) {
 
     const ref = useRef()
 
-    // useLayoutEffect(() => {
-    //     scene.traverse((obj) => {
-    //         if (obj.isMesh) {
-    //             obj.castShadow = obj.receiveShadow = shadows
-    //             obj.material.envMapIntensity = 0.8
-    //         }
-    //     })
-    // }, [scene, shadows])
+    const Model = {
+        'Clownfish': ClownfishModel,
+        'Bone Fish': BoneFishModel,
+    }[model]
 
     return (
         <Canvas camera={{ position: [-10, 10, 40], fov: 50 }}>
@@ -26,6 +25,7 @@ export default function Viewer({ scale, children }) {
             <group position={[0, -10, 0]}>
 
                 <group position={[0, 0.25, 0]} scale={scale ? scale : 12} >
+                    {Model && <Model />}
                     {children}
                 </group>
 

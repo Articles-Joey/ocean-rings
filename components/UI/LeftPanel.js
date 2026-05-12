@@ -15,22 +15,9 @@ import useFullscreen from '@articles-media/articles-dev-box/useFullscreen';
 import { useStore } from "@/hooks/useStore";
 // import { Debug } from "@react-three/cannon";
 
-export default function LeftPanelContent(props) {
+export default function LeftPanelContent({
 
-    const {
-        server,
-        players,
-        touchControlsEnabled,
-        setTouchControlsEnabled,
-        // reloadScene,
-        controllerState,
-        // isFullscreen,
-        // requestFullscreen,
-        // exitFullscreen,
-        setShowMenu
-    } = props;
-
-    const incSceneKey = useStore((state) => state.incSceneKey);
+}) {
 
     const { isFullscreen, requestFullscreen, exitFullscreen } = useFullscreen();
 
@@ -60,9 +47,6 @@ export default function LeftPanelContent(props) {
     //     // debug
     //     // touchControls, setTouchControls
     // } = useGameStore()
-
-    const debug = useStore(state => state.debug)
-    const setDebug = useStore(state => state.setDebug)
 
     return (
         <div className='w-100'>
@@ -146,7 +130,7 @@ export default function LeftPanelContent(props) {
                             className={`w-100`}
                             small
                             onClick={() => {
-                                setShowSettingsModal(prev => !prev)
+                                setShowSettingsModal(true)
                             }}
                         >
                             <i className="fad fa-cog"></i>
@@ -181,84 +165,7 @@ export default function LeftPanelContent(props) {
 
             <PlayerDataPanel />
 
-            {/* Touch Controls */}
-            {/* <div
-                className="card card-articles card-sm"
-            >
-                <div className="card-body">
-
-                    <div className="small">Touch Controls</div>
-
-                    <div className='d-flex flex-column'>
-
-                        <div>
-                            <ArticlesButton
-                                size="sm"
-                                className="w-50"
-                                active={!touchControlsEnabled}
-                                onClick={() => {
-                                    setTouchControlsEnabled(false)
-                                }}
-                            >
-                                <i className="fad fa-redo"></i>
-                                Off
-                            </ArticlesButton>
-
-                            <ArticlesButton
-                                size="sm"
-                                className="w-50"
-                                active={touchControlsEnabled}
-                                onClick={() => {
-                                    setTouchControlsEnabled(true)
-                                }}
-                            >
-                                <i className="fad fa-redo"></i>
-                                On
-                            </ArticlesButton>
-                        </div>
-
-                    </div>
-
-                </div>
-            </div> */}
-
             <DebugPanel />
-
-            {controllerState?.connected &&
-                <div className="panel-content-group p-0 text-dark">
-
-                    <div className="p-1 border-bottom border-dark">
-                        <div className="fw-bold" style={{ fontSize: '0.7rem' }}>
-                            {controllerState?.id}
-                        </div>
-                    </div>
-
-                    <div className='p-1'>
-                        <ArticlesButton
-                            small
-                            className="w-100"
-                            active={showControllerState}
-                            onClick={() => {
-                                setShowControllerState(prev => !prev)
-                            }}
-                        >
-                            {showControllerState ? 'Hide' : 'Show'} Controller Preview
-                        </ArticlesButton>
-                    </div>
-
-                    {showControllerState && <div className='p-3'>
-
-                        <ControllerPreview
-                            controllerState={controllerState}
-                            showJSON={true}
-                            showVibrationControls={true}
-                            maxHeight={300}
-                            showPreview={true}
-                        />
-                    </div>}
-
-                </div>
-            }
 
         </div>
     )
@@ -279,24 +186,24 @@ function PlayerDataPanel() {
             <div className="card-body d-flex justify-content-between">
 
                 {/* <div> */}
-                    {/* <div className="small fw-bold">playerData:</div> */}
-                    <div className="small d-flex justify-content-between align-items-center w-100">
+                {/* <div className="small fw-bold">playerData:</div> */}
+                <div className="small d-flex justify-content-between align-items-center w-100">
 
-                        <div className="fw-bold">Score: {score}</div>
+                    <div className="fw-bold">Score: {score}</div>
 
-                        <div className="d-flex">
-                            <div className="badge bg-black">Distance: {distance?.toFixed(0)}</div>
-                            <div className="badge bg-black">X: {playerLocation?.x?.toFixed(0)}</div>
-                            <div className="badge bg-black">Y: {playerLocation?.y?.toFixed(0)}</div>
-                        </div>
-
-                        {/* <div>Test{playerLocation.y}</div> */}
-                        {/* <div>Z: {playerLocation?.z}</div> */}
-
-                        {/* <div>Shift: {shift ? 'True' : 'False'}</div> */}
-
+                    <div className="d-flex">
+                        <div className="badge bg-black">Distance: {distance?.toFixed(0)}</div>
+                        <div className="badge bg-black">X: {playerLocation?.x?.toFixed(0)}</div>
+                        <div className="badge bg-black">Y: {playerLocation?.y?.toFixed(0)}</div>
                     </div>
-                    {/* {JSON.stringify(playerData, undefined, 2)} */}
+
+                    {/* <div>Test{playerLocation.y}</div> */}
+                    {/* <div>Z: {playerLocation?.z}</div> */}
+
+                    {/* <div>Shift: {shift ? 'True' : 'False'}</div> */}
+
+                </div>
+                {/* {JSON.stringify(playerData, undefined, 2)} */}
                 {/* </div> */}
 
                 {/* <div>
@@ -318,24 +225,20 @@ function PlayerDataPanel() {
 }
 
 function DebugPanel() {
+    const sceneKey = useStore((state) => state.sceneKey);
+    const setShowMenu = useStore((state) => state.setShowMenu);
+    const reloadScene = useStore((state) => state.reloadScene);
 
     const debug = useStore(state => state.debug)
-
-    const setSceneKey = useGameStore((state) => state.setSceneKey);
-    const incSceneKey = useGameStore((state) => state.incSceneKey);
+    const setDebug = useStore(state => state.setDebug)
 
     const cameraMode = useGameStore((state) => state.cameraMode);
     const setCameraMode = useGameStore((state) => state.setCameraMode);
-
-    const sceneKey = useGameStore((state) => state.sceneKey);
-
-    const setShowMenu = useGameStore((state) => state.setShowMenu);
 
     if (!debug) return null;
 
     return (
         <>
-
             {/* Debug Controls */}
             <div
                 className="card card-articles card-sm"
@@ -350,7 +253,9 @@ function DebugPanel() {
                             <ArticlesButton
                                 size="sm"
                                 className="w-50"
-                                onClick={incSceneKey}
+                                onClick={() => {
+                                    reloadScene()
+                                }}
                             >
                                 <i className="fad fa-redo"></i>
                                 Reload Game

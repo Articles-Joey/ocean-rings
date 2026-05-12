@@ -1,80 +1,62 @@
 "use client";
 
-import { useEffect, useRef } from "react";
 import { useAudioStore } from "@/hooks/useAudioStore";
-import { usePathname } from "next/navigation";
+import { useEffect, useRef } from "react";
 
 export default function AudioHandler() {
 
-    const pathname = usePathname();
-    
     const audioSettings = useAudioStore((state) => state?.audioSettings);
+    const setAudioSettings = useAudioStore((state) => state?.setAudioSettings);
+
     const musicRef = useRef(null);
+    const interactedRef = useRef(false);
 
-    // Initialize Audio instance once
+    // Initialize audio object once
     useEffect(() => {
-        if (typeof window !== 'undefined' && !musicRef.current) {
-            musicRef.current = new Audio("/audio/audio-loop.mp3");
-            // Use built-in looping for seamless loop
-            musicRef.current.loop = true;
-            // Set initial volume if available
-            const initialSettings = useAudioStore.getState().audioSettings;
-            if (initialSettings?.backgroundMusicVolume) {
-                musicRef.current.volume = initialSettings.backgroundMusicVolume / 100;
-            }
-        }
+        if (typeof window === 'undefined') return;
 
-        // Cleanup on unmount
-        return () => {
-            if (musicRef.current) {
-                musicRef.current.pause();
-                musicRef.current = null;
+        const music = new Audio(`/audio/audio-loop.mp3`);
+        musicRef.current = music;
+
+        music.onended = function () {
+            music.currentTime = 0;
+            music.play().catch(() => {});
+        };
+
+        const tryPlay = () => {
+            if (!interactedRef.current && audioSettings?.enabled) {
+                interactedRef.current = true;
+                music.play().catch(() => {});
             }
+        };
+
+        const events = ['click', 'keydown', 'touchstart', 'pointerdown'];
+        events.forEach((e) => document.addEventListener(e, tryPlay, { once: true }));
+
+        return () => {
+            events.forEach((e) => document.removeEventListener(e, tryPlay));
+            music.pause();
+            musicRef.current = null;
         };
     }, []);
 
-    // Handle Volume Changes Independently
-    useEffect(() => {
-        if (musicRef.current && audioSettings) {
-             const volume = audioSettings.backgroundMusicVolume !== undefined 
-                ? audioSettings.backgroundMusicVolume 
-                : 50;
-             musicRef.current.volume = volume / 100;
-        }
-    }, [audioSettings?.backgroundMusicVolume]);
-
-    // Handle Play/Pause State
+    // Handle audio settings changes
     useEffect(() => {
         const music = musicRef.current;
         if (!music) return;
-        // Don't play on home page
-        // if (pathname === "/") {
-        //     music.pause();
-        //     return;
-        // }
+
+        music.volume = audioSettings?.enabled ? (audioSettings?.music_volume / 100) : 0;
+
         if (audioSettings?.enabled) {
-            // If supposed to be playing but isn't
-            if (music.paused) {
-                music.currentTime = 0; // Restart from beginning when enabling or entering game
-                const playPromise = music.play();
-                if (playPromise !== undefined) {
-                    playPromise.catch((err) => {
-                        // Auto-play was prevented or interrupted
-                        console.warn("Audio autoplay was blocked by the browser. User interaction required.");
-                        if (typeof useAudioStore === 'function') {
-                            useAudioStore.getState().setAudioSettings({
-                                ...useAudioStore.getState().audioSettings,
-                                blocked: true
-                            });
-                        }
-                    });
+            if (interactedRef.current) {
+                if (music.paused) {
+                    music.play().catch(() => {});
                 }
             }
         } else {
-            // Disabled
             music.pause();
         }
-    }, [audioSettings?.enabled, pathname]);
+    }, [audioSettings]);
 
     return null;
 

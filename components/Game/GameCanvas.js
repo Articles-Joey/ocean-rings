@@ -60,6 +60,7 @@ function GameCanvas({
 
     const debug = useStore(state => state.debug)
     const darkMode = useStore(state => state.darkMode)
+    const showStats = useStore((state) => state?.debugConfig?.showStats);
 
     let gameContent = (
         <>
@@ -93,7 +94,9 @@ function GameCanvas({
     return (
         <Canvas camera={{ fov: 45, position: [0, 5, 20] }}>
 
-            <Stats />
+            {showStats && <>
+                <Stats className="stats-overlay" />
+            </>}
 
             {/* <color
                 attach="background"

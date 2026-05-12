@@ -17,7 +17,6 @@ import SocketLogicHandler from "@/components/SocketLogicHandler";
 import { Suspense } from 'react';
 
 import LayoutClient from './layoutClient'
-import GlobalClientModals from '@/components/UI/GlobalClientModals';
 import dynamic from 'next/dynamic';
 
 export const metadata = {
@@ -31,24 +30,16 @@ export default function RootLayout({ children }) {
 
       <head>
         
-        {/* <link
-          rel="stylesheet"
-          href={`${process.env.NEXT_PUBLIC_CDN}fonts/fontawesome/css/all.min.css`}
-        /> */}
-
       </head>
 
-      <body
-      // className={`${geistSans.variable} ${geistMono.variable}`}
-      >
+      <body>
 
         <SocketLogicHandler />
         <LayoutClient />
 
-        <Suspense>
+        {/* <Suspense>
           <GlobalClientModals />
-          {/* <DarkModeHandler /> */}
-        </Suspense>
+        </Suspense> */}
 
         <AppRouterCacheProvider options={{ enableCssLayer: true }}>
           <ThemeProvider theme={theme}>

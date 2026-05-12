@@ -20,3 +20,11 @@ i {
 :root, [data-bs-theme=dark] {
     --bs-body-bg: #0d1729;
 }
+
+.stats-overlay {
+    position: fixed;
+    top: 0;
+    right: 0 !important;
+    left: initial !important;
+    z-index: 4;
+}

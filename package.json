@@ -1,6 +1,7 @@
 {
   "name": "ocean-rings",
-  "version": "0.1.0",
+  "description": "The objective is to swim through the correct ring as depicted in the bottom right. Players move at a constant speed toward oncoming rings and the movement of the rings varies. If there is more than one player playing and all players get through their rings, a group bonus is given!",
+  "version": "0.2.0",
   "homepage": "https://ocean-rings.articles.media",
   "private": false,
   "scripts": {
@@ -10,7 +11,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@articles-media/articles-dev-box": "^1.0.25",
+    "@articles-media/articles-dev-box": "^1.2.0",
     "@articles-media/articles-gamepad-helper": "^0.0.13",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
