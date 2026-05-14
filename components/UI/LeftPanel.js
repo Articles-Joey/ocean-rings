@@ -10,9 +10,12 @@ import ControllerPreview from '@/components/UI/ControllerPreview';
 
 import { useSocketStore } from "@/hooks/useSocketStore";
 
+import GameMenuPrimaryButtonGroup from '@articles-media/articles-dev-box/GameMenuPrimaryButtonGroup';
+
 import useFullscreen from '@articles-media/articles-dev-box/useFullscreen';
 
 import { useStore } from "@/hooks/useStore";
+import { useSearchParams } from "next/navigation";
 // import { Debug } from "@react-three/cannon";
 
 export default function LeftPanelContent({
@@ -85,80 +88,10 @@ export default function LeftPanelContent({
                         </div>
                     } */}
 
-                    <Link
-                        href={'/'}
-                        className="w-50"
-                    >
-                        <ArticlesButton
-                            small
-                            className='w-100'
-                        >
-                            <i className="fad fa-arrow-alt-square-left"></i>
-                            <span>Leave Game</span>
-                        </ArticlesButton>
-                    </Link>
-
-                    <ArticlesButton
-                        small
-                        className="w-50"
-                        active={isFullscreen}
-                        onClick={() => {
-                            if (isFullscreen) {
-                                exitFullscreen()
-                            } else {
-                                requestFullscreen()
-                            }
-                        }}
-                    >
-                        {isFullscreen && <span>Exit </span>}
-                        {!isFullscreen && <span><i className='fad fa-expand'></i></span>}
-                        <span>Fullscreen</span>
-                    </ArticlesButton>
-
-                    {/* <ArticlesButton
-                        small
-                        className='w-50'
-                        onClick={() => {
-                            setShowSettingsModal(true)
-                        }}
-                    >
-                        <i className="fad fa-cog"></i>
-                        <span>Settings</span>
-                    </ArticlesButton> */}
-                    <div className="d-flex w-50">
-                        <ArticlesButton
-                            className={`w-100`}
-                            small
-                            onClick={() => {
-                                setShowSettingsModal(true)
-                            }}
-                        >
-                            <i className="fad fa-cog"></i>
-                            Settings
-                        </ArticlesButton>
-                        <ArticlesButton
-                            className={``}
-                            small
-                            onClick={() => {
-                                toggleDarkMode()
-                            }}
-                        >
-                            <i className="fad fa-moon"></i>
-                            {/* Dark Mode */}
-                        </ArticlesButton>
-                    </div>
-
-                    <ArticlesButton
-                        small
-                        className='w-50'
-                        active={sidebar}
-                        onClick={() => {
-                            toggleSidebar()
-                        }}
-                    >
-                        <i className="fad fa-cog"></i>
-                        <span>Sidebar</span>
-                    </ArticlesButton>
+                    <GameMenuPrimaryButtonGroup
+                        useStore={useStore}
+                        type="GameMenu"
+                    />
 
                 </div>
             </div>
@@ -172,26 +105,102 @@ export default function LeftPanelContent({
 
 }
 
+export function useHandleStartGame() {
+    const searchParams = useSearchParams()
+    const params = Object.fromEntries(searchParams.entries());
+    const { server } = params
+
+    const socket = useSocketStore(state => state.socket)
+    const startGame = useSocketStore(state => state.startGame)
+
+    const gameState = useGameStore(state => state.gameState)
+    const setGameState = useGameStore(state => state.setGameState)
+    const setScore = useGameStore(state => state.setScore)
+    const setDistance = useGameStore(state => state.setDistance)
+
+    function handleStartGame(server, status) {
+
+        if (server) {
+            startGame(
+                server,
+                status || "In Progress"
+            )
+        } else {
+            setGameState({
+                ...gameState,
+                status: status || "In Progress"
+            })
+            setScore(0)
+            setDistance(0)
+        }
+
+    }
+
+    return handleStartGame
+}
+
 function PlayerDataPanel() {
 
+    const searchParams = useSearchParams()
+    const params = Object.fromEntries(searchParams.entries());
+    const { server } = params
+
+    const socket = useSocketStore(state => state.socket)
+    const startGame = useSocketStore(state => state.startGame)
+
     const playerLocation = useGameStore(state => state.playerLocation)
+    const players = useGameStore(state => state.gameState.players)
     const score = useGameStore(state => state.score)
     const distance = useGameStore(state => state.distance)
+    const timer = useGameStore(state => state.gameState.timer)
+    const status = useGameStore(state => state.gameState.status)
     // const shift = useGameStore(state => state.shift)
+
+    const handleStartGame = useHandleStartGame()
+
+    // function handleStartGame(server, status) {
+
+    //     const gameState = useGameStore.getState().gameState
+    //     const setGameState = useGameStore.getState().setGameState
+    //     const setScore = useGameStore.getState().setScore
+    //     const setDistance = useGameStore.getState().setDistance
+
+    //     if (server) {
+    //         startGame(
+    //             server,
+    //             "In Progress"
+    //         )
+    //     } else {
+    //         setGameState({
+    //             ...gameState,
+    //             status: "In Progress"
+    //         })
+    //         setScore(0)
+    //         setDistance(0)
+    //     }
+
+    // }
 
     return (
         <div
             className="card card-articles card-sm"
         >
-            <div className="card-body d-flex justify-content-between">
+            <div className="card-body d-flex flex-column justify-content-between">
 
-                {/* <div> */}
-                {/* <div className="small fw-bold">playerData:</div> */}
-                <div className="small d-flex justify-content-between align-items-center w-100">
+                <div className="flex-header mb-1">
+                    <div className="fw-bold">Status: {status}</div>
+                    <div className="">
+                        <i className="fad fa-clock"></i>
+                        {timer || 0}
+                    </div>
+                </div>
 
-                    <div className="fw-bold">Score: {score}</div>
+                <div className="small d-flex justify-content-between align-items-center w-100 mb-2">
 
-                    <div className="d-flex">
+                    {/* <div className="fw-bold">Score: {score}</div> */}
+
+                    <div className="d-flex gap-1">
+                        <div className="badge bg-black">Score: {score?.toFixed(0)}</div>
                         <div className="badge bg-black">Distance: {distance?.toFixed(0)}</div>
                         <div className="badge bg-black">X: {playerLocation?.x?.toFixed(0)}</div>
                         <div className="badge bg-black">Y: {playerLocation?.y?.toFixed(0)}</div>
@@ -203,21 +212,52 @@ function PlayerDataPanel() {
                     {/* <div>Shift: {shift ? 'True' : 'False'}</div> */}
 
                 </div>
-                {/* {JSON.stringify(playerData, undefined, 2)} */}
-                {/* </div> */}
 
-                {/* <div>
-                        <div className="small text-muted">maxHeight</div>
-                        <div>Y: {maxHeight}</div>
-                        <ArticlesButton
-                            small
-                            onClick={() => {
-                                setMaxHeight(playerLocation?.y)
-                            }}
-                        >
-                            Reset
-                        </ArticlesButton>
-                    </div> */}
+                {(
+                    status == "In Lobby"
+                    ||
+                    status == "Game Over"
+                ) &&
+                    <ArticlesButton
+                        variant="articles w-100 mb-2"
+                        // size="sm"
+                        onClick={() => {
+                            handleStartGame(server, "In Progress")
+                        }
+                        }
+                    >
+                        <i className="fad fa-play"></i>
+                        Start game
+                    </ArticlesButton>
+                }
+
+                <div className="border mb-2">
+                    {players?.map(player => {
+
+                        const isYou = (
+                            (
+                                !server
+                                &&
+                                player.id === "local"
+                            )
+                            ||
+                            (
+                                server
+                                &&
+                                socket?.id == player.id
+                            )
+                        )
+
+                        return (
+                            (
+                                <div key={player.id} className="border p-2">
+                                    <div>{isYou ? "(You) " : ""}{player.nickname}</div>
+                                    <div className="" style={{ fontSize: "0.65rem" }}>{player.id}</div>
+                                </div>
+                            )
+                        )
+                    })}
+                </div>
 
             </div>
         </div>

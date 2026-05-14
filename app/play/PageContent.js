@@ -17,6 +17,8 @@ import GameMenu from '@articles-media/articles-dev-box/GameMenu';
 import { useStore } from '@/hooks/useStore';
 import classNames from 'classnames';
 import { useHotkeys } from 'react-hotkeys-hook';
+import SinglePlayerHandler from '@/components/Handlers/SinglePlayerHandler';
+import GameOverModal from '@/components/UI/GameOverModal';
 const GameCanvas = dynamic(() => import('@/components/Game/GameCanvas'), {
     ssr: false,
 });
@@ -120,7 +122,8 @@ export default function OceanRingsGamePage() {
     const sceneKey = useStore((state) => state.sceneKey);
     const sidebar = useStore((state) => state.sidebar);
     const showMenu = useStore((state) => state.showMenu);
-    const reloadScene = useStore((state) => state.reloadScene);        
+    const reloadScene = useStore((state) => state.reloadScene);
+    const status = useGameStore((state) => state.gameState.status);
 
     useHotkeys('t', () => {
         // setTouchControlsEnabled((prev) => !prev)
@@ -157,6 +160,15 @@ export default function OceanRingsGamePage() {
                     centerContent: true,
                 }}
             />
+
+            {status == "Game Over" &&
+                <GameOverModal
+                    show={status == "Game Over"}
+                    setShow={useStore.getState().setShowGameOverModal}
+                />
+            }
+
+            <SinglePlayerHandler />
 
             <div className='canvas-wrap'>
 

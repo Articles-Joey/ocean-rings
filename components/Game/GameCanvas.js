@@ -1,16 +1,18 @@
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { Debug, Physics } from '@react-three/cannon';
 import { Center, Image, OrbitControls, Plane, Sky, Stats, Text, Text3D } from '@react-three/drei'
-import { memo, useMemo, useRef } from 'react';
+import { memo, Suspense, useMemo, useRef } from 'react';
 // import MovingPlatform from './Platforms/MovingPlatform';
 // import { useGameStore } from '@/hooks/useGameStore';
 // import Bounds from './Bounds';
 import Player from './Player';
-import Rings from './Rings';
+// import Rings from './Rings';
 // import getRandomHexColor from 'util/getRandomHexColor';
-import Decorations from './Decorations';
+// import Decorations from './Decorations';
 import OceanSurface from './OceanSurface';
 import { useStore } from '@/hooks/useStore';
+import GameSections from './GameSections';
+// import Obstacles from './Obstacles';
 
 const TARGET = [0, 1, 0];
 const CAM_Y = 5;
@@ -30,7 +32,7 @@ function LandingCamera() {
 }
 
 function GameCanvas({
-    landingAnimation
+    landingAnimationMode
 }) {
 
     // const {
@@ -62,35 +64,6 @@ function GameCanvas({
     const darkMode = useStore(state => state.darkMode)
     const showStats = useStore((state) => state?.debugConfig?.showStats);
 
-    let gameContent = (
-        <>
-
-            <OceanSurface />
-
-            <Rings />
-
-            {!landingAnimation &&
-                <Player
-                    position={[0, 1, 0]}
-                />
-            }
-
-        </>
-    )
-
-    let physicsContent
-    if (debug) {
-        physicsContent = (
-            <Debug>
-                {gameContent}
-            </Debug>
-        )
-    } else {
-        physicsContent = (
-            gameContent
-        )
-    }
-
     return (
         <Canvas camera={{ fov: 45, position: [0, 5, 20] }}>
 
@@ -119,16 +92,36 @@ function GameCanvas({
 
             <Physics gravity={[0, 0, 0]}>
 
-                {physicsContent}
+                <Debug color="black" scale={debug ? 1 : 0}>
+
+                    <Suspense fallback={null}>
+
+                        <OceanSurface />
+    
+                        <GameSections
+                            landingAnimationMode={landingAnimationMode}
+                        />
+    
+                        {!landingAnimationMode &&
+                            <Suspense>
+                                <Player
+                                    position={[0, 1, 0]}
+                                />
+                            </Suspense>
+                        }
+
+                    </Suspense>
+
+                </Debug>
 
             </Physics>
 
             <OrbitControls
                 target={TARGET}
-                enabled={!landingAnimation}
+                enabled={!landingAnimationMode}
             />
 
-            {landingAnimation && <LandingCamera />}
+            {landingAnimationMode && <LandingCamera />}
 
         </Canvas>
     )

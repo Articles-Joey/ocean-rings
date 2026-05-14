@@ -9,7 +9,7 @@ export const useSocketStore = create((set) => ({
     }),
     serverUrl: process.env.NEXT_PUBLIC_NODE_SERVER, // Default server URL
     connectSocket: (url) => {
-        console.log("[📶Socket] connectSocket called")
+        // console.log("[📶Socket] connectSocket called")
         const newSocket = io(url || process.env.NEXT_PUBLIC_NODE_SERVER, {
             transports: ["websocket"],
             autoConnect: false,
@@ -30,8 +30,29 @@ export const useSocketStore = create((set) => ({
         // Disconnect but do not dump socket store or socket.on and socket.connected will be undefined if not careful
         // return { socket: null };
     }),
+    startGame: (gameId, status) => {
+        set((state) => {
+            state.socket.emit(`game:${process.env.NEXT_PUBLIC_GAME_KEY}:start`, {
+                game_id: gameId,
+                status: status
+            });
+            return {}
+        })
+    },
     totalUsers: 0,
     setTotalUsers: (total) => set({ totalUsers: total }),
     connected: false,
     setConnected: (total) => set({ connected: total }),
+    authenticated: false,
+    setAuthenticated: (value) => set({ authenticated: value }),
+    loginSocket: (data) => {
+        set((state) => {
+            const socket = state.socket;
+            socket.emit('login-socket', {
+                ...data,
+                game_name: process.env.NEXT_PUBLIC_GAME_NAME,
+            });
+            return {}
+        })
+    },
 }));

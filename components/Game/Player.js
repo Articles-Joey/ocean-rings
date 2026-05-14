@@ -14,6 +14,9 @@ import BoneFishModel from "@/components/PlayerModels/BoneFish"
 import { useLocalStorageNew } from "@/hooks/useLocalStorageNew"
 import Shadow from "./Shadow"
 import { useStore } from "@/hooks/useStore"
+import { useSocketStore } from "@/hooks/useSocketStore"
+import { useSearchParams } from "next/navigation"
+import { degToRad } from "three/src/math/MathUtils.js"
 
 const JUMP_FORCE = 6;
 const SPEED = 4;
@@ -28,7 +31,13 @@ function myToFixed(i, digits) {
 
 function PlayerBase(props) {
 
+    const searchParams = useSearchParams()
+    const params = Object.fromEntries(searchParams.entries());
+    const { server } = params
+
     // const { setPlayerData, teleportPlayer, setTeleportPlayer } = props;
+
+    const { socket } = useSocketStore()
 
     const {
         cameraMode, setCameraMode,
@@ -42,6 +51,7 @@ function PlayerBase(props) {
     } = useGameStore()
 
     const debug = useStore(state => state.debug)
+    const status = useGameStore(state => state.gameState.status)
 
     const {
         touchControls, setTouchControls
@@ -126,7 +136,9 @@ function PlayerBase(props) {
 
     useFrame(() => {
 
-        addDistance(0.1)
+        if (status == "In Progress") {
+            addDistance(0.1)
+        }
 
         if (cameraMode == "Player") {
             camera.position.copy(new Vector3(0, pos.current[1], (pos.current[2] + 15)))
@@ -156,6 +168,18 @@ function PlayerBase(props) {
         if (JSON.stringify(lastLocation) !== JSON.stringify(newLocation)) {
             // console.log(newLocation, lastLocation)
             setPlayerLocation(newLocation)
+
+            if (socket && server) {
+                socket.emit(`game:${process.env.NEXT_PUBLIC_GAME_KEY}:move`, {
+                    server: server,
+                    x: newLocation.x,
+                    y: newLocation.y,
+                    z: newLocation.z,
+                    // action: action,
+                    // rotation: [0, degToRad(lastMove), 0]
+                })
+            }
+
             lastLocation = newLocation
         }
         // else {

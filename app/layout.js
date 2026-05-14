@@ -29,17 +29,17 @@ export default function RootLayout({ children }) {
     <html lang="en">
 
       <head>
-        
+
       </head>
 
       <body>
 
-        <SocketLogicHandler />
         <LayoutClient />
 
-        {/* <Suspense>
-          <GlobalClientModals />
-        </Suspense> */}
+        <Suspense>
+          {/* Needs suspense because of useSearchParams */}
+          <SocketLogicHandler />
+        </Suspense>
 
         <AppRouterCacheProvider options={{ enableCssLayer: true }}>
           <ThemeProvider theme={theme}>

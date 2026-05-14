@@ -18,7 +18,7 @@ export function ModelKennyNLPirateShipWreck(props) {
   const { nodes, materials } = useGLTF(link)
   return (
     <group {...props} dispose={null}>
-      <group name="ship_wreck_8angles" position={[9.255, 0, 0.014]}>
+      <group name="ship_wreck_8angles" position={[0, 0, 0]}>
         <mesh name="ship_wreck_8angles_1" castShadow receiveShadow geometry={nodes.ship_wreck_8angles_1.geometry} material={materials.PaletteMaterial002} />
         <mesh name="ship_wreck_8angles_2" castShadow receiveShadow geometry={nodes.ship_wreck_8angles_2.geometry} material={materials.PaletteMaterial001} />
       </group>

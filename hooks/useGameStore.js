@@ -4,7 +4,7 @@ import { createWithEqualityFn as create } from 'zustand/traditional'
 
 const assets_src = 'games/Ocean Rings/'
 
-export const useGameStore = create((set) => ({
+export const useGameStore = create((set, get, store) => ({
 
     sceneKey: 0,
     setSceneKey: (newValue) => {
@@ -84,6 +84,18 @@ export const useGameStore = create((set) => ({
         }))
     },
 
+    totalObstaclesGenerated: 0,
+    setTotalObstaclesGenerated: (newValue) => {
+        set((prev) => ({
+            totalObstaclesGenerated: newValue
+        }))
+    },
+    incTotalObstaclesGenerated: () => {
+        set((prev) => ({
+            totalObstaclesGenerated: prev.totalObstaclesGenerated + 1
+        }))
+    },
+
     shift: false,
     setShift: (newValue) => {
         set((prev) => ({
@@ -115,6 +127,9 @@ export const useGameStore = create((set) => ({
             gameState: newValue
         }))
     },
+
+    reset: () => set(store.getInitialState()),
+
 }))
 
 export const useControlsStore = create((set) => ({
