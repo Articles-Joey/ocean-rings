@@ -9,12 +9,13 @@ import { useGraph } from '@react-three/fiber'
 import { useGLTF, useAnimations } from '@react-three/drei'
 import { SkeletonUtils } from 'three-stdlib'
 
-let link = `${process.env.NEXT_PUBLIC_CDN}games/Ocean Rings/player/ZebraClownFish.glb`
+// let link = `${process.env.NEXT_PUBLIC_CDN}games/Ocean Rings/player/ZebraClownFish.glb`
+let link = `models/player/ZebraClownFish.glb`
 
 // Will load from local public folder instead of CDN
-if (process.env.NEXT_PUBLIC_MODEL_SOURCE == "LOCAL") {
-    link = `/models/decorations/player/ZebraClownFish.glb`
-}
+// if (process.env.NEXT_PUBLIC_MODEL_SOURCE == "LOCAL") {
+//     link = `/models/decorations/player/ZebraClownFish.glb`
+// }
 
 export function ModelQuaterniusFishingZebraClownFish(props) {
   const group = React.useRef()
@@ -23,7 +24,7 @@ export function ModelQuaterniusFishingZebraClownFish(props) {
   const { nodes, materials } = useGraph(clone)
   const { actions } = useAnimations(animations, group)
   return (
-    <group ref={group} {...props} dispose={null}>
+    <group ref={group} {...props} dispose={null} scale={0.4}>
       <group name="Scene">
         <group name="Fish_Armature">
           <primitive object={nodes.Main1} />

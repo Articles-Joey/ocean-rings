@@ -135,12 +135,17 @@ function Decorations({ position, obstacle }) {
 
             {obstacle.id % 3 === 0 && <>
                 {deadFishPostions.map((fish) => (
-                    <BoneFishModel
+                    <group
                         key={fish.id}
-                        position={fish.position}
-                        rotation={fish.rotation}
-                        scale={fish.scale}
-                    />
+                        rotation={[0, 0, degToRad(90)]}
+                    >
+                        <BoneFishModel
+                            // key={fish.id}
+                            position={fish.position}
+                            rotation={fish.rotation}
+                            scale={fish.scale}
+                        />
+                    </group>
                 ))}
             </>}
 

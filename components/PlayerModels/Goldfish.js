@@ -9,12 +9,12 @@ import { useGraph } from '@react-three/fiber'
 import { useGLTF, useAnimations } from '@react-three/drei'
 import { SkeletonUtils } from 'three-stdlib'
 
-let link = `${process.env.NEXT_PUBLIC_CDN}games/Ocean Rings/player/Goldfish.glb`
+let link = `models/player/Goldfish.glb`
 
 // Will load from local public folder instead of CDN
-if (process.env.NEXT_PUBLIC_MODEL_SOURCE == "LOCAL") {
-    link = `/models/player/Goldfish.glb`
-}
+// if (process.env.NEXT_PUBLIC_MODEL_SOURCE == "LOCAL") {
+//     link = `/models/player/Goldfish.glb`
+// }
 
 export function ModelQuaterniusFishingGoldfish(props) {
   const group = React.useRef()
@@ -23,7 +23,7 @@ export function ModelQuaterniusFishingGoldfish(props) {
   const { nodes, materials } = useGraph(clone)
   const { actions } = useAnimations(animations, group)
   return (
-    <group ref={group} {...props} dispose={null}>
+    <group ref={group} {...props} dispose={null} scale={0.25}>
       <group name="Scene">
         <group name="Fish_Armature">
           <primitive object={nodes.Main1} />

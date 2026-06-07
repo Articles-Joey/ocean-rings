@@ -7,18 +7,18 @@ Files: models\Worm.glb [15.93KB] > F:\My Documents\Articles Media\AMCOT\Models\Q
 import React from 'react'
 import { useGLTF } from '@react-three/drei'
 
-let link = `${process.env.NEXT_PUBLIC_CDN}games/Assets/Quaternius/Fishing/Models/Worm.glb`
+let link = `models/player/Worm.glb`
 
 // Will load from local public folder instead of CDN
-if (process.env.NEXT_PUBLIC_MODEL_SOURCE == "LOCAL") {
-    link = `/models/player/Worm.glb`
-}
+// if (process.env.NEXT_PUBLIC_MODEL_SOURCE == "LOCAL") {
+//     link = `/models/player/Worm.glb`
+// }
 
 export function ModelQuaterniusFishingWorm(props) {
   const { nodes, materials } = useGLTF(link)
   return (
     <group {...props} dispose={null}>
-      <group name="Worm" position={[1.803, 0, 0]} rotation={[Math.PI / 2, 0, 0]} scale={6.02}>
+      <group name="Worm" position={[0, 0, 0]} rotation={[Math.PI / 2, 0, 0]} scale={6.02}>
         <mesh name="Cylinder014" castShadow receiveShadow geometry={nodes.Cylinder014.geometry} material={materials.Worm} />
         <mesh name="Cylinder014_1" castShadow receiveShadow geometry={nodes.Cylinder014_1.geometry} material={materials.Black} />
       </group>

@@ -13,6 +13,7 @@ import { useStore } from '@/hooks/useStore';
 // import useUserDetails from '@articles-media/articles-dev-box/useUserDetails';
 // import useUserToken from '@articles-media/articles-dev-box/useUserToken';
 import PageTemplateLandingPage from '@articles-media/articles-dev-box/PageTemplateLandingPage';
+import { useCharactersStore } from '@/hooks/useCharactersStore';
 const LandingBackgroundAnimation = dynamic(() => import('@/components/Game/LandingBackgroundAnimation'), {
     ssr: false,
     loading: () => <p>Loading...</p>
@@ -53,7 +54,7 @@ export default function OceanRingsGameLandingPage() {
 
     const character = useStore((state) => state.character);
     const setCharacter = useStore((state) => state.setCharacter);
-    const characters = useStore((state) => state.characters);
+    const characters = useCharactersStore((state) => state.characters);
 
     const [characterEdit, setCharacterEdit] = useState()
     const [colorEdit, setColorEdit] = useState()
@@ -113,7 +114,7 @@ export default function OceanRingsGameLandingPage() {
                 CardOverride={
                     characterEdit ?
                         <div
-                            className="card card-articles card-sm"
+                            className="card card-articles card-sm mb-3"
                             style={{ "width": "20rem" }}
                         >
 

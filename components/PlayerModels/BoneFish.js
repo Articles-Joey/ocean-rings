@@ -1,6 +1,6 @@
 import { useGLTF, useAnimations } from '@react-three/drei'
 
-const linkFishBone = `${process.env.NEXT_PUBLIC_CDN}games/Ocean Rings/Fish Bone.glb`
+const linkFishBone = `models/player/FishBone.glb`
 
 export default function BoneFishModel(props) {
     const { nodes, materials } = useGLTF(linkFishBone)
@@ -11,7 +11,8 @@ export default function BoneFishModel(props) {
                 receiveShadow
                 geometry={nodes.FishBone.geometry}
                 material={materials.Beige}
-                rotation={[-Math.PI / 2, 0, 0]}
+                rotation={[0, 0, 0]}
+                position={[0, 0, 0]}
                 scale={100}
             />
         </group>

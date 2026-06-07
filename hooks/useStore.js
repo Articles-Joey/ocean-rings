@@ -30,18 +30,6 @@ export const useStore = create()(
           character: newValue
         }))
       },
-      characters: [
-        {
-          name: "Clownfish",
-          image: `${process.env.NEXT_PUBLIC_CDN}${assets_src}ClownfishModelThumb.jpg`,
-          defaultColor: '#FFFFFF',
-        },
-        {
-          name: "Bone Fish",
-          image: `${process.env.NEXT_PUBLIC_CDN}${assets_src}BoneFishModelThumb.jpg`,
-          defaultColor: '',
-        }
-      ],
 
       updateCamera: null,
       setUpdateCamera: (updateCamera) => set({ updateCamera }),
@@ -52,7 +40,7 @@ export const useStore = create()(
     }),
     {
       name: `${process.env.NEXT_PUBLIC_GAME_KEY}-site-storage`,
-      version: 2,
+      version: 3,
       onRehydrateStorage: (state) => {
         return () => state.setHasHydrated(true)
       },
