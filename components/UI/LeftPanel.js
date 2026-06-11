@@ -15,7 +15,7 @@ import GameMenuPrimaryButtonGroup from '@articles-media/articles-dev-box/GameMen
 import useFullscreen from '@articles-media/articles-dev-box/useFullscreen';
 
 import { useStore } from "@/hooks/useStore";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 // import { Debug } from "@react-three/cannon";
 
 export default function LeftPanelContent({
@@ -91,6 +91,7 @@ export default function LeftPanelContent({
                     <GameMenuPrimaryButtonGroup
                         useStore={useStore}
                         type="GameMenu"
+                        useRouter={useRouter}
                     />
 
                 </div>

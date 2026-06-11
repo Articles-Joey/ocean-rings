@@ -27,7 +27,9 @@ const useTouchControlsStore = create()(
             },
             setTouchControls: (newValue) => {
                 set((prev) => ({
-                    touchControls: newValue
+                    touchControls: typeof newValue === 'function'
+                        ? newValue(prev.touchControls)
+                        : newValue
                 }))
             }
 

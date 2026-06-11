@@ -7,12 +7,18 @@ Files: models\Dock_Wide.glb [91.9KB] > F:\My Documents\Articles Media\AMCOT\Mode
 import React from 'react'
 import { useGLTF } from '@react-three/drei'
 
-let link = `${process.env.NEXT_PUBLIC_CDN}games/Assets/Quaternius/Fishing/Models/Dock_Wide.glb`
+// let link = `${process.env.NEXT_PUBLIC_CDN}games/Assets/Quaternius/Fishing/Models/Dock_Wide.glb`
 
-// Will load from local public folder instead of CDN
-if (process.env.NEXT_PUBLIC_MODEL_SOURCE == "LOCAL") {
-    link = `/models/decorations/Dock_Wide.glb`
-}
+// // Will load from local public folder instead of CDN
+// if (process.env.NEXT_PUBLIC_MODEL_SOURCE == "LOCAL") {
+//     link = `/models/decorations/Dock_Wide.glb`
+// }
+
+import getAssetSource from '@articles-media/articles-dev-box/getAssetSource';
+
+const link = getAssetSource(
+  `/models/decorations/Dock_Wide.glb`
+);
 
 export function ModelQuaterniusFishingDock_Wide(props) {
   const { nodes, materials } = useGLTF(link)

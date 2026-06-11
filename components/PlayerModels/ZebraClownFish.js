@@ -10,12 +10,18 @@ import { useGLTF, useAnimations } from '@react-three/drei'
 import { SkeletonUtils } from 'three-stdlib'
 
 // let link = `${process.env.NEXT_PUBLIC_CDN}games/Ocean Rings/player/ZebraClownFish.glb`
-let link = `models/player/ZebraClownFish.glb`
+// let link = `models/player/ZebraClownFish.glb`
 
 // Will load from local public folder instead of CDN
 // if (process.env.NEXT_PUBLIC_MODEL_SOURCE == "LOCAL") {
 //     link = `/models/decorations/player/ZebraClownFish.glb`
 // }
+
+import getAssetSource from '@articles-media/articles-dev-box/getAssetSource';
+
+const link = getAssetSource(
+  `models/player/ZebraClownFish.glb`
+);
 
 export function ModelQuaterniusFishingZebraClownFish(props) {
   const group = React.useRef()

@@ -64,23 +64,22 @@
 
     // }
 
-    .touch-controls-area {
-        position: fixed;
-        bottom: 50px;
-        left: 0;
-        width: 100%;
-        height: 150px;
-        z-index: 1;
-        background-color: rgba(0, 0, 0, 0.5);
+    .panel-left {
+        z-index: 2!important;
+    }
 
-        padding: 1rem 1rem;
+    .touch-controls-area {
+        position: absolute;
+        right: 0px;
+        width: 100%;
+        height: 100%;
+        z-index: 1;
+        // background-color: rgba(0, 0, 0, 0.25);
+        // padding: 1rem 1rem;
         display: flex;
         justify-content: space-between;
         align-items: center;
-
-        // @include media-breakpoint-up(lg) {
-        //     display: none;
-        // }
+        overflow: hidden;
     }
 
     .debug-info,

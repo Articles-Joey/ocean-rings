@@ -16,7 +16,6 @@ import AudioHandler from '@/components/Handlers/AudioHandler';
 import GameMenu from '@articles-media/articles-dev-box/GameMenu';
 import { useStore } from '@/hooks/useStore';
 import classNames from 'classnames';
-import { useHotkeys } from 'react-hotkeys-hook';
 import SinglePlayerHandler from '@/components/Handlers/SinglePlayerHandler';
 import GameOverModal from '@/components/UI/GameOverModal';
 const GameCanvas = dynamic(() => import('@/components/Game/GameCanvas'), {
@@ -64,73 +63,15 @@ export default function OceanRingsGamePage() {
 
     useEffect(() => {
 
-        return
-
-        // setShowInfoModal(localStorage.getItem('game:four-frogs:rulesAnControls') === 'true' ? true : false)
-
-        // if (userReduxState._id) {
-        //     console.log("Is user")
-        // }
-
-        if (server) {
-            socket.on(`game:glass-ceiling-room-${server}`, function (msg) {
-                console.log(`game:glass-ceiling-room-${server}`, msg)
-                setPlayers(msg.players)
-                // setLobbyDetails(msg)
-            });
-        }
-
-        return () => {
-            socket.off(`game:glass-ceiling-room-${server}`);
-            socket.emit('leave-room', `game:glass-ceiling-room-${server}`, {
-                game_id: server,
-                // nickname: JSON.parse(localStorage.getItem('game:nickname')),
-                // client_version: '1',
-            })
-        };
-
-    }, [server])
-
-    useEffect(() => {
-
         setDistance(0)
         setScore(0)
 
     }, []);
 
-    useEffect(() => {
-
-        return
-
-        if (server && socket.connected) {
-            socket.emit('join-room', `game:glass-ceiling-room-${server}`, {
-                game_id: server,
-                nickname: JSON.parse(localStorage.getItem('game:nickname')),
-                client_version: '1',
-
-            });
-        }
-
-        // return function cleanup() {
-        //     socket.emit('leave-room', 'game:glass-ceiling-landing')
-        // };
-
-    }, [server, socket.connected]);
-
-    const [touchControlsEnabled, setTouchControlsEnabled] = useState(false)
-
     const sceneKey = useStore((state) => state.sceneKey);
     const sidebar = useStore((state) => state.sidebar);
     const showMenu = useStore((state) => state.showMenu);
-    const reloadScene = useStore((state) => state.reloadScene);
     const status = useGameStore((state) => state.gameState.status);
-
-    useHotkeys('t', () => {
-        // setTouchControlsEnabled((prev) => !prev)
-    });
-    useHotkeys('r', () => {
-        reloadScene()
-    });
 
     return (
 
@@ -172,9 +113,7 @@ export default function OceanRingsGamePage() {
 
             <div className='canvas-wrap'>
 
-                <TouchControls
-                    touchControlsEnabled={touchControlsEnabled}
-                />
+                <TouchControls />
 
                 <GameCanvas
                     key={sceneKey}

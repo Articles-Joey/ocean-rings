@@ -1,7 +1,8 @@
-import { memo, useEffect, useState } from "react";
+import { memo, useEffect, useRef, useState } from "react";
 
 import ArticlesButton from "@/components/UI/Button"
-import { useControlsStore, useGameStore } from "@/hooks/useGameStore"
+import useTouchControlsStore from "@/hooks/useTouchControlsStore";
+import { useStore } from "@/hooks/useStore";
 
 const arePropsEqual = (prevProps, nextProps) => {
     // Compare all props for equality
@@ -12,7 +13,7 @@ function JumpButtonBase() {
 
     const {
         touchControls, setTouchControls
-    } = useControlsStore()
+    } = useTouchControlsStore()
 
     return (
         <ArticlesButton
@@ -33,38 +34,45 @@ const JumpButton = memo(JumpButtonBase, arePropsEqual);
 
 function TouchControlsBase(props) {
 
-    const {
-        touchControlsEnabled,
-    } = props;
+    const sceneKey = useStore(state => state.sceneKey)
 
+    const managerRef = useRef(null)
     const [nippleCreated, setNippleCreated] = useState(false)
 
     const [nStart, setnStart] = useState(false)
     const [nDirection, setnDirection] = useState(false)
 
     const {
-        touchControls, setTouchControls
-    } = useControlsStore()
+        touchControls,
+        setTouchControls,
+        enabled: touchControlsEnabled
+    } = useTouchControlsStore()
 
     function startNipple() {
 
-        // console.log("n", nipplejs)
+        const zone = document.getElementById('zone_joystick')
 
-        // return
+        if (!zone) {
+            return null
+        }
 
-        var options = {
-            zone: document.getElementById('zone_joystick'),
+        if (managerRef.current) {
+            managerRef.current.destroy()
+            managerRef.current = null
+        }
+
+        const options = {
+            zone,
             // threshold: 0.5
             // lockX: true,
         };
 
-        // var manager = nipplejs.create(options);
-        var manager = require('nipplejs').create(options);
+        const manager = require('nipplejs').create(options);
 
+        managerRef.current = manager
         setNippleCreated(true)
 
-        let dragDistance
-        let dragDirection
+        let dragDistance = 0
 
         manager.on('start end', function (evt, data) {
             // dump(evt.type);
@@ -77,171 +85,104 @@ function TouchControlsBase(props) {
                 setnStart(false)
                 setnDirection(false)
                 dragDistance = 0
-                dragDirection = false
-                setTouchControls({
-                    ...touchControls,
+                setTouchControls((prev) => ({
+                    ...prev,
                     left: false,
                     right: false,
                     up: false,
                     down: false
-                })
+                }))
             }
 
         })
-        .on('move', function (evt, data) {
+            .on('move', function (evt, data) {
 
-            // debug(data);
-            dragDistance = data.distance
-            console.log("2", dragDistance)
+                dragDistance = data.distance || 0
+                const { x = 0, y = 0 } = data.vector || {}
+                const threshold = 0.35
 
-            if (dragDistance > 15 && dragDirection) {
+                console.log("2", dragDistance, x, y)
 
-                if (dragDirection == 'left') setTouchControls({
-                    ...touchControls,
-                    left: true,
-                    right: false
-                })
+                setTouchControls((prev) => ({
+                    ...prev,
+                    left: x < -threshold,
+                    right: x > threshold,
+                    up: y > threshold,
+                    down: y < -threshold,
+                }))
 
-                if (dragDirection == 'right') setTouchControls({
-                    ...touchControls,
-                    left: false,
-                    right: true
-                })
-
-                if (dragDirection == 'up') setTouchControls({
-                    ...touchControls,                    
-                    up: true,
-                    down: false,
-                })
-
-                if (dragDirection == 'down') setTouchControls({
-                    ...touchControls,
-                    up: false,
-                    down: true,
-                })
-
-            } else {
-                setTouchControls({
-                    ...touchControls,
-                    left: false,
-                    right: false,
-                    up: false,
-                    down: false
-                })
-            }
-
-        })
-        .on(' ' +
-            'dir:up plain:up dir:left plain:left dir:down ' +
-            'plain:down dir:right plain:right',
-            function (evt, data) {
-
-                if (evt.type == 'move') {
-                    dragDistance = data.distance
-                }  
-                
-                // dump(evt.type);
-                console.log("3", evt.type, dragDistance)
-            
-                if (evt.type == 'dir:left') {
-                    dragDirection = 'left'
-                    // setnDirection('left')
-                    // setTouchControls({
-                    //     ...touchControls,
-                    //     left: true,
-                    //     right: false
-                    // })
+                if (dragDistance <= 15) {
+                    setTouchControls((prev) => ({
+                        ...prev,
+                        left: false,
+                        right: false,
+                        up: false,
+                        down: false,
+                    }))
                 }
 
-                if (evt.type == 'dir:right') {
-                    dragDirection = 'right'
-                    // setnDirection('right')
-                    // setTouchControls({
-                    //     ...touchControls,
-                    //     left: false,
-                    //     right: true
-                    // })
-                }
+            })
+            .on(' ' +
+                'dir:up plain:up dir:left plain:left dir:down ' +
+                'plain:down dir:right plain:right',
+                function (evt, data) {
+                    if (evt.type === 'move') {
+                        dragDistance = data.distance || 0
+                    }
 
-                if (evt.type == 'dir:down') {
-                    dragDirection = 'down'
-                    // setnDirection('right')
-                    // setTouchControls({
-                    //     ...touchControls,
-                    //     left: false,
-                    //     right: true
-                    // })
+                    if (evt.type === 'dir:left' || evt.type === 'dir:right' || evt.type === 'dir:up' || evt.type === 'dir:down') {
+                        setnDirection(evt.type.replace('dir:', ''))
+                    }
                 }
+            )
+            .on('pressure', function (evt, data) {
+                // debug({
+                //   pressure: data
+                // });
+            });
 
-                if (evt.type == 'dir:up') {
-                    dragDirection = 'up'
-                    // setnDirection('right')
-                    // setTouchControls({
-                    //     ...touchControls,
-                    //     left: false,
-                    //     right: true
-                    // })
-                }
-
-            }
-        )
-        .on('pressure', function (evt, data) {
-            // debug({
-            //   pressure: data
-            // });
-        });
+        return manager
     }
 
     useEffect(() => {
 
-        if (!nippleCreated) {
-            console.log("Load nipple")
-            startNipple()
+        if (!touchControlsEnabled) {
+            if (managerRef.current) {
+                managerRef.current.destroy()
+                managerRef.current = null
+            }
+            setNippleCreated(false)
+            return
         }
 
-    }, []);
+        console.log("Load nipple")
+        const manager = startNipple()
+
+        return () => {
+            if (managerRef.current) {
+                console.log("Destroy nipple")
+                managerRef.current.destroy()
+                managerRef.current = null
+            }
+            setNippleCreated(false)
+        }
+
+    }, [touchControlsEnabled, sceneKey]);
 
     return (
         <div className={`touch-controls-area ${!touchControlsEnabled && 'd-none'}`}>
 
-            <div className='d-flex'>
-
-                <div>
-                    {/* <ArticlesButton
-                    onClick={() => {
-                        setTouchControls({
-                            left: true
-                        })
-                    }}
-                >
-                    Left
-                </ArticlesButton>
-                <ArticlesButton
-                    onClick={() => {
-                        setTouchControls({
-                            right: true
-                        })
-                    }}
-                >
-                    Right
-                </ArticlesButton> */}
-                    <div style={{
-                        position: 'relative',
-                        width: '100px',
-                        height: '100px',
-                        backgroundColor: 'black'
-                    }} id="zone_joystick"></div>
-                </div>
-
-                <div className='ms-2 d-none d-lg-block'>
-                    <div>Active: {nStart ? 'True' : 'False'}</div>
-                    <div>Direction: {nDirection ? nDirection : 'None'}</div>
-                    <div>Touch: {JSON.stringify(touchControls)}</div>
-                </div>
-
+            <div className="w-100 h-100">
+                <div style={{
+                    position: 'absolute',
+                    width: '100%',
+                    height: '100%',
+                    // backgroundColor: 'black',
+                    zIndex: 1,
+                }} id="zone_joystick"></div>
             </div>
 
-            <JumpButton />
+            {/* <JumpButton /> */}
 
         </div>
     )

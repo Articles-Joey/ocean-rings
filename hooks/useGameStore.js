@@ -131,20 +131,3 @@ export const useGameStore = create((set, get, store) => ({
     reset: () => set(store.getInitialState()),
 
 }))
-
-export const useControlsStore = create((set) => ({
-
-    touchControls: {
-        jump: false,
-        left: false,
-        right: false,
-        up: false,
-        down: false
-    },
-    setTouchControls: (newValue) => {
-        set((prev) => ({
-            touchControls: newValue
-        }))
-    }
-
-}))

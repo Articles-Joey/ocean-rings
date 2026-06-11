@@ -7,12 +7,18 @@ Files: models\ship_wreck.gltf [6.79KB] > F:\My Documents\Articles Media\AMCOT\Mo
 import React from 'react'
 import { useGLTF } from '@react-three/drei'
 
-let link = `${process.env.NEXT_PUBLIC_CDN}games/Assets/KennyNL/Pirate/Models/ship_wreck.glb`
+// let link = `${process.env.NEXT_PUBLIC_CDN}games/Assets/KennyNL/Pirate/Models/ship_wreck.glb`
 
-// Will load from local public folder instead of CDN
-if (process.env.NEXT_PUBLIC_MODEL_SOURCE == "LOCAL") {
-    link = `/models/decorations/ship_wreck.glb`
-}
+// // Will load from local public folder instead of CDN
+// if (process.env.NEXT_PUBLIC_MODEL_SOURCE == "LOCAL") {
+//     link = `/models/decorations/ship_wreck.glb`
+// }
+
+import getAssetSource from '@articles-media/articles-dev-box/getAssetSource';
+
+const link = getAssetSource(
+  `/models/decorations/ship_wreck.glb`
+);
 
 export function ModelKennyNLPirateShipWreck(props) {
   const { nodes, materials } = useGLTF(link)

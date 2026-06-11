@@ -7,12 +7,18 @@ Files: models\Worm.glb [15.93KB] > F:\My Documents\Articles Media\AMCOT\Models\Q
 import React from 'react'
 import { useGLTF } from '@react-three/drei'
 
-let link = `models/player/Worm.glb`
+// let link = `models/player/Worm.glb`
 
 // Will load from local public folder instead of CDN
 // if (process.env.NEXT_PUBLIC_MODEL_SOURCE == "LOCAL") {
 //     link = `/models/player/Worm.glb`
 // }
+
+import getAssetSource from '@articles-media/articles-dev-box/getAssetSource';
+
+const link = getAssetSource(
+  `/models/player/Worm.glb`
+);
 
 export function ModelQuaterniusFishingWorm(props) {
   const { nodes, materials } = useGLTF(link)

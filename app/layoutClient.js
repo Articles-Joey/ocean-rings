@@ -11,12 +11,22 @@ import DarkModeHandler from "@articles-media/articles-dev-box/DarkModeHandler";
 import GlobalBody from '@articles-media/articles-dev-box/GlobalBody';
 import ToontownModeHandler from '@articles-media/articles-dev-box/ToontownModeHandler';
 import GlobalClientModals from '@articles-media/articles-dev-box/GlobalClientModals';
+import { useHotkeys } from 'react-hotkeys-hook';
 
 export default function LayoutClient({
 
 }) {
 
     const darkMode = useStore((state) => state?.darkMode);
+    const reloadScene = useStore((state) => state.reloadScene);
+    const toggleTouchControlsEnabled = useTouchControlsStore((state) => state.toggleEnabled);
+
+    useHotkeys('t', () => {
+        toggleTouchControlsEnabled()
+    });
+    useHotkeys('r', () => {
+        reloadScene()
+    });
 
     return (
         <>

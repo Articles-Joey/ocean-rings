@@ -7,7 +7,9 @@ import * as THREE from 'three';
 import { useKeyboard } from "@/hooks/useKeyboard"
 
 import { useControllerStore } from '@/hooks/useControllerStore';
-import { useControlsStore, useGameStore } from "@/hooks/useGameStore";
+
+import { useGameStore } from "@/hooks/useGameStore";
+import useTouchControlsStore from "@/hooks/useTouchControlsStore";
 
 import ClownfishModel from "@/components/PlayerModels/Clownfish"
 import BoneFishModel from "@/components/PlayerModels/BoneFish"
@@ -55,7 +57,7 @@ function PlayerBase(props) {
 
     const {
         touchControls, setTouchControls
-    } = useControlsStore()
+    } = useTouchControlsStore()
 
     const { controllerState, setControllerState } = useControllerStore()
 
