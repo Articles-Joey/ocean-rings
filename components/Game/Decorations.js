@@ -14,19 +14,14 @@ import { degToRad } from "three/src/math/MathUtils.js";
 // let linkKelp = `${process.env.NEXT_PUBLIC_CDN}games/Ocean Rings/Kelp.glb`
 // let linkKelpCoral = `${process.env.NEXT_PUBLIC_CDN}games/Ocean Rings/KelpCoral.glb`
 
-// // Will load from local public folder instead of CDN
-// if (process.env.NEXT_PUBLIC_MODEL_SOURCE == "LOCAL") {
-//     linkKelp = `/models/decorations/Kelp.glb`
-//     linkKelpCoral = `/models/decorations/KelpCoral.glb`
-// }
-
+import { hillHeight } from "@/util/hillHeight"
 import getAssetSource from '@articles-media/articles-dev-box/getAssetSource';
 
 const linkKelp = getAssetSource(
-  `/models/decorations/Kelp.glb`
+    `/models/decorations/Kelp.glb`
 );
 const linkKelpCoral = getAssetSource(
-  `/models/decorations/KelpCoral.glb`
+    `/models/decorations/KelpCoral.glb`
 );
 
 function Kelp(props) {
@@ -54,22 +49,60 @@ function KelpCoral(props) {
 
 function Decorations({ position, obstacle }) {
 
-    const refX = useRef(generateRandomInteger(-5, 5));
+    const canonicalCenterZ = 18 - (obstacle.id ?? 0) * 10;
+
+    const decorationItems = useMemo(() => {
+        const items = [];
+        // Add random Kelp
+        for (let i = 0; i < 2; i++) {
+            const localX = generateRandomInteger(-10, 10);
+            const localZ = generateRandomInteger(-5, 5);
+            // Height based on world position (simulating Ground logic)
+            // Ground is at x=0
+            const worldX = localX;
+            const worldZ = canonicalCenterZ + localZ;
+            const y = hillHeight(worldX, worldZ);
+            items.push({ type: 'Kelp', position: [localX, y, localZ], id: `kelp-${i}` });
+        }
+        // Add random KelpCoral
+        for (let i = 0; i < 2; i++) {
+            const localX = generateRandomInteger(-15, 15);
+            const localZ = generateRandomInteger(-5, 5);
+            const worldX = localX;
+            const worldZ = canonicalCenterZ + localZ;
+            const y = hillHeight(worldX, worldZ);
+            items.push({ type: 'KelpCoral', position: [localX, y, localZ], id: `kelp-coral-${i}` });
+        }
+        return items;
+    }, [obstacle.id, canonicalCenterZ]);
 
     const shipRotation = useMemo(() => degToRad(generateRandomInteger(0, 360)), [obstacle.id])
 
     const deadFishPostions = useMemo(() => {
-        return [...Array(2)].map(() => ({
-            id: Math.random().toString(36).substring(2, 11),
-            position: [
-                generateRandomInteger(-1, 1),
-                0, // Slightly above the floor
-                generateRandomInteger(-1, 1)
-            ],
-            rotation: [0, generateRandomInteger(0, 360) * (Math.PI / 180), 0],
-            scale: generateRandomInteger(8, 15) / 100
-        }));
-    }, []);
+        return [...Array(2)].map(() => {
+            const localX = generateRandomInteger(-1, 1);
+            const localZ = generateRandomInteger(-1, 1);
+            const worldX = localX;
+            const worldZ = canonicalCenterZ + localZ;
+            const y = hillHeight(worldX, worldZ) + 0.1;
+
+            return {
+                id: Math.random().toString(36).substring(2, 11),
+                position: [localX, y, localZ],
+                rotation: [0, generateRandomInteger(0, 360) * (Math.PI / 180), 0],
+                scale: generateRandomInteger(8, 15) / 100
+            };
+        });
+    }, [canonicalCenterZ]);
+
+    const shipPosition = useMemo(() => {
+        const localX = (obstacle.id % 2 === 0) ? 12 : -15;
+        const localZ = 0;
+        const worldX = localX;
+        const worldZ = canonicalCenterZ + localZ;
+        const y = hillHeight(worldX, worldZ);
+        return [localX, y, localZ];
+    }, [obstacle.id, canonicalCenterZ]);
 
     // useFrame(() => {
     //     if (ref.current) {
@@ -109,38 +142,28 @@ function Decorations({ position, obstacle }) {
     return (
         <group
             position={[
-                refX.current,
+                0,
                 position[1],
                 position[2]
             ]}
         >
 
-            {/* <group>{kelpMemo}</group>
-            <group>{kelpCoralMemo}</group> */}
-
-            <KelpCoral
-                position={[
-                    20,
-                    8,
-                    0
-                ]}
-            />
-
-            <Kelp
-                position={[
-                    0,
-                    1,
-                    0
-                ]}
-            />
-
-            <KelpCoral
-                position={[
-                    25,
-                    8,
-                    0
-                ]}
-            />
+            {decorationItems.map((item) => (
+                item.type === 'Kelp' ?
+                    <Kelp
+                        key={item.id}
+                        position={[
+                            item.position[0] + 0,
+                            item.position[1] + 1,
+                            item.position[2]
+                        ]}
+                    /> :
+                    <KelpCoral key={item.id} position={[
+                        item.position[0] + 20,
+                        item.position[1] + 8,
+                        item.position[2]
+                    ]} />
+            ))}
 
             {obstacle.id % 3 === 0 && <>
                 {deadFishPostions.map((fish) => (
@@ -160,14 +183,7 @@ function Decorations({ position, obstacle }) {
 
             {(obstacle.id % 3 === 0) &&
                 <ModelKennyNLPirateShipWreck
-                    position={
-                        [
-                            (obstacle.id % 2 === 0) ? 10 : -20,
-                            0,
-                            0
-                            // obstacle.position[2]
-                        ]
-                    }
+                    position={shipPosition}
                     rotation={[
                         0,
                         shipRotation,

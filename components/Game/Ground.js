@@ -6,6 +6,7 @@ import { useTexture } from '@react-three/drei';
 import { ModelRockLarge } from "./Rock_Large"
 
 import generateRandomInteger from "@/util/generateRandomInteger"
+import { hillHeight } from "@/util/hillHeight"
 import * as THREE from 'three'
 
 const floor_size = [75, 0.1, 10]
@@ -13,16 +14,6 @@ const floor_size = [75, 0.1, 10]
 // Subdivisions for the visual hill mesh
 const HILL_SEGS_X = 30
 const HILL_SEGS_Z = 20
-
-// Deterministic hill height based on world position.
-// Adjacent segments share boundary world-Z values, so the seam is seamless.
-function hillHeight(x, z) {
-    return (
-        Math.sin(z * 0.35) * 0.45 +
-        Math.sin(z * 0.8 + x * 0.2 + 1.1) * 0.25 +
-        Math.sin(z * 1.5 + x * 0.15 + 2.2) * 0.15
-    )
-}
 
 export default function Ground(props) {
 
@@ -128,7 +119,7 @@ export default function Ground(props) {
     return (
         <>
             {/* Invisible flat box used only for physics collision */}
-            <mesh ref={ref} {...props} visible={false}>
+            <mesh ref={ref} castShadow={false} {...props} visible={false}>
                 <boxGeometry args={floor_size} />
                 <meshStandardMaterial />
             </mesh>

@@ -19,6 +19,7 @@ import { useStore } from "@/hooks/useStore"
 import { useSocketStore } from "@/hooks/useSocketStore"
 import { useSearchParams } from "next/navigation"
 import { degToRad } from "three/src/math/MathUtils.js"
+import { hillHeight } from "@/util/hillHeight"
 
 const JUMP_FORCE = 6;
 const SPEED = 4;
@@ -47,6 +48,7 @@ function PlayerBase(props) {
         setPlayerLocation,
         maxHeight, setMaxHeight,
         shift, setShift,
+        distance,
         addDistance,
         addScore,
         // debug
@@ -258,7 +260,15 @@ function PlayerBase(props) {
     return (
         <group>
 
-            <Shadow radius={0.8} opacity={0.7} position={[pos.current[0], 0.26, pos.current[2]]} />
+            <Shadow
+                radius={0.8}
+                opacity={0.7}
+                position={[
+                    pos.current[0],
+                    -2 + hillHeight(pos.current[0], pos.current[2] - distance) + 0.05,
+                    pos.current[2]
+                ]}
+            />
 
             <mesh
                 ref={ref}

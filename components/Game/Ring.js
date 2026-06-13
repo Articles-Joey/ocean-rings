@@ -11,6 +11,7 @@ import Decorations from "./Decorations";
 import { ModelKennyNLPirateShipWreck } from "@/components/Game/ship_wreck";
 import { degToRad } from "three/src/math/MathUtils.js";
 import Shadow from "./Shadow";
+import { hillHeight } from "@/util/hillHeight";
 
 function Ring(props) {
 
@@ -18,6 +19,8 @@ function Ring(props) {
     const hitRef = useRef(false);       // set to true when player collides with this ring
     const lockedRef = useRef(false);    // prevents overwriting color once it's been set
     const [innerColor, setInnerColor] = useState('gray');
+
+    const distance = useGameStore(state => state.distance)
 
     // Calculate opacity based on position relative to player
     // Rings fade out as they move from z=0 to z=10 (past the player)
@@ -128,7 +131,17 @@ function Ring(props) {
     return (
         <group ref={ref}>
 
-            {ringOpacity > 0 && <Shadow radius={1.2} opacity={0.6 * ringOpacity} position={[0, 0.26 - props.position[1], 0]} />}
+            {ringOpacity > 0 && (
+                <Shadow
+                    radius={1.2}
+                    opacity={0.6 * ringOpacity}
+                    position={[
+                        0,
+                        -2 + hillHeight(props.position[0], props.position[2] - distance) + 0.05 - props.position[1],
+                        0
+                    ]}
+                />
+            )}
 
             {
                 // (
