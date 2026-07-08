@@ -71,6 +71,7 @@ export default function OceanRingsGamePage() {
     const sceneKey = useStore((state) => state.sceneKey);
     const sidebar = useStore((state) => state.sidebar);
     const showMenu = useStore((state) => state.showMenu);
+    
     const status = useGameStore((state) => state.gameState.status);
 
     return (
