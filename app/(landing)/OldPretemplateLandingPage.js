@@ -1,4 +1,13 @@
-"use client"
+"use client";
+import Box from "@mui/material/Box";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import SaveIcon from "@mui/icons-material/Save";
+import ShuffleIcon from "@mui/icons-material/Shuffle";
+import SettingsIcon from "@mui/icons-material/Settings";
+import PaletteIcon from "@mui/icons-material/Palette";
+import InfoIcon from "@mui/icons-material/Info";
+import GitHubIcon from "@mui/icons-material/GitHub";
+import GroupIcon from "@mui/icons-material/Group";
 import { useEffect, useContext, useState } from 'react';
 
 import Image from 'next/image'
@@ -162,9 +171,9 @@ function OldPretemplateLandingPage() {
     // }, [socket.connected]);
 
     return (
-        <div className="landing-page d-none">
+        <Box sx={{"flexGrow":1,"display":"none","justifyContent":"center","alignItems":"center","minHeight":"100vh","& .scoreboard":{"my":"1rem","maxWidth":300,"width":"100%","@media (min-width: 992px)":{"my":0,"display":"block","position":"absolute","left":"1rem","top":"50%","transform":"translateY(-50%)"}},"& .ad-wrap":{"mt":"1rem","@media (min-width: 992px)":{"mt":0,"display":"block","position":"absolute","right":"1rem","top":"50%","transform":"translateY(-50%)"}}}}>
 
-                <div className='background-wrap'>
+                <Box sx={{"position":"fixed","inset":0,"width":"100%","height":"100%","zIndex":-1,"& img":{"filter":darkMode ? "blur(2px) brightness(0.5)" : "blur(2px)"}}}>
                     {landingAnimation ?
                         <LandingBackgroundAnimation />
                         :
@@ -175,37 +184,35 @@ function OldPretemplateLandingPage() {
                             style={{ objectFit: 'cover', objectPosition: 'bottom' }}
                         />
                     }
-                </div>
+                </Box>
 
-                <div className="container py-3 d-flex flex-column-reverse flex-lg-row justify-content-center align-items-center">
+                <Box sx={{"width":"100%","mx":"auto","px":"0.75rem","@media (min-width: 576px)":{"maxWidth":540},"@media (min-width: 768px)":{"maxWidth":720},"@media (min-width: 992px)":{"maxWidth":960,"flexDirection":"row"},"@media (min-width: 1200px)":{"maxWidth":1140},"@media (min-width: 1400px)":{"maxWidth":1320},"py":"1rem","display":"flex","flexDirection":"column-reverse","justifyContent":"center","alignItems":"center"}}>
 
-                    {/* <GameScoreboard
-                        game="Ocean Rings"
-                    /> */}
+                    
 
                     {characterEdit &&
-                        <div
-                            className="card card-articles card-sm"
-                            style={{ "width": "20rem" }}
+                        <Box
+                            sx={[{"bgcolor":"game.card","color":"text.primary","backgroundImage":"none","display":"flex","flexDirection":"column","minWidth":0,"border":1,"borderColor":"divider","borderRadius":"0.375rem","fontSize":"0.875rem"}, { "width": "20rem" }]}
+                            
                         >
 
-                            <div className="card-header d-flex align-items-center">
+                            <Box sx={{"p":"0.5rem 1rem","borderBottom":1,"borderColor":"divider","bgcolor":"rgba(0,0,0,0.03)","display":"flex","alignItems":"center"}}>
 
                                 Character Selector
 
-                            </div>
+                            </Box>
 
-                            <div className="card-body p-2">
+                            <Box sx={{"flex":"1 1 auto","p":"0.5rem"}}>
 
-                                <div className="selection-grid mb-2">
+                                <Box sx={{"display":"grid","gap":"5px","gridTemplateColumns":"repeat(2, minmax(0, 1fr))","mb":"0.5rem"}}>
                                     {characters.map(item => {
 
                                         let active = character.model == item.name
 
                                         return (
-                                            <div
+                                            <Box
                                                 key={item.name}
-                                                className={`item ${active && 'active'}`}
+                                                className={active ? "active" : undefined} sx={{"cursor":"pointer","transitionDuration":"200ms","&:hover":{"transform":"scale(1.025)","boxShadow":"0 0 0 1px rgba(0,0,0,0.25), 0 2px 3px rgba(0,0,0,0.2)"},"&.active":{"border":"2px solid #000"}}}
                                                 onClick={() => {
                                                     setCharacter({
                                                         ...character,
@@ -213,152 +220,89 @@ function OldPretemplateLandingPage() {
                                                     })
                                                 }}
                                             >
-                                                <div className="ratio ratio-1x1">
+                                                <Box sx={{"position":"relative","width":"100%","& > *":{"position":"absolute","inset":0,"width":"100%","height":"100%"},"aspectRatio":"1 / 1"}}>
 
                                                     {active &&
-                                                        <div className=''>
+                                                        <Box >
                                                             <Viewer model={item.name} />
-                                                        </div>
+                                                        </Box>
                                                     }
 
                                                     {!active &&
-                                                        <img
-                                                            className='img-fluid'
-                                                            style={{ objectFit: 'cover' }}
+                                                        <Box component="img"
+                                                            sx={[{"maxWidth":"100%","height":"auto"}, { objectFit: 'cover' }]}
+                                                            
                                                             src={item.image}
                                                             alt=""
                                                         />
                                                     }
 
-                                                </div>
-                                            </div>
+                                                </Box>
+                                            </Box>
                                         )
                                     })}
-                                </div>
+                                </Box>
 
-                                {/* {colorEdit &&
-                                    <div className='mb-2'>
-                                        <ChromePicker
-                                            // color={color}
-                                            width={"100%"}
-                                            color={character.color}
-                                            onChange={(color, e) => {
-    
-                                                console.log(color)
-    
-                                                setCharacter({
-                                                    ...character,
-                                                    color: color.hex
-                                                })
-    
-                                            }}
-                                            onChangeComplete={(color, e) => {
-                                                console.log("Change Complete", color.rgb)
-                                            }}
-                                        />
-                                    </div>
-                                } */}
+                                
 
-                                {/* <div className='d-flex justify-content-center'>
-    
-                                    <ArticlesButton
-                                        small
-                                        className="w-50"
-                                        disabled={!character.color}
-                                        onClick={() => {
-    
-                                            let character_copy = { ...character }
-    
-                                            delete character_copy.color
-    
-                                            setCharacter(character_copy)
-    
-                                        }}
-                                    >
-                                        <i className="fad fa-redo"></i>
-                                        Reset Color
-                                    </ArticlesButton>
-    
-                                    <ArticlesButton
-                                        small
-                                        className="w-50"
-                                        // active={colorEdit}
-                                        onClick={() => {
-    
-                                            setColorEdit(prev => !prev)
-    
-                                        }}
-                                    >
-    
-                                        {colorEdit ? <i className="fad fa-check"></i> : <i className="fad fa-palette"></i>}
-                                        {colorEdit ? 'Done' : 'Select Color'}
-                                    </ArticlesButton>
-    
-                                </div> */}
+                                
 
-                            </div>
+                            </Box>
 
-                            <div className="card-footer d-flex justify-content-center">
+                            <Box sx={{"p":"0.5rem 1rem","borderTop":1,"borderColor":"divider","bgcolor":"rgba(0,0,0,0.03)","display":"flex","justifyContent":"center"}}>
 
                                 <ArticlesButton
-                                    className="w-50"
+                                    sx={{"width":"50%"}}
                                     onClick={() => {
                                         setCharacterEdit(false)
                                     }}
                                 >
-                                    <i className="fad fa-arrow-alt-left"></i>
+                                    <ArrowBackIcon fontSize="small" sx={{ mr: "0.2rem" }} />
                                     Return
                                 </ArticlesButton>
 
                                 <ArticlesButton
-                                    className="w-50"
+                                    sx={{"width":"50%"}}
                                     onClick={() => {
                                         setCharacterEdit(false)
                                     }}
                                 >
-                                    <i className="fad fa-save"></i>
+                                    <SaveIcon fontSize="small" sx={{ mr: "0.2rem" }} />
                                     Save
                                 </ArticlesButton>
 
-                            </div>
+                            </Box>
 
-                        </div>
+                        </Box>
                     }
 
                     {!characterEdit &&
-                        <div>
-                            <div
-                                className="card card-articles card-sm mb-3"
-                                style={{ "width": "20rem" }}
+                        <Box>
+                            <Box
+                                sx={[{"bgcolor":"game.card","color":"text.primary","backgroundImage":"none","display":"flex","flexDirection":"column","minWidth":0,"border":1,"borderColor":"divider","borderRadius":"0.375rem","fontSize":"0.875rem","mb":"1rem"}, { "width": "20rem" }]}
+                                
                             >
 
-                                {/* <div style={{ position: 'relative', height: '200px' }}>
-                                <Image
-                                    src={Logo}
-                                    alt=""
-                                    fill
-                                    style={{ objectFit: 'cover' }}
-                                />
-                            </div> */}
+                                
 
-                                <div className='card-header d-flex align-items-center'>
+                                <Box sx={{"p":"0.5rem 1rem","borderBottom":1,"borderColor":"divider","bgcolor":"rgba(0,0,0,0.03)","display":"flex","alignItems":"center"}}>
 
-                                    <div className='flex-shrink-0 me-2'>
+                                    <Box sx={{"flexShrink":0,"mr":"0.5rem"}}>
 
-                                        <div style={{ width: '50px', height: '50px' }} >
-                                            <div
-                                                className="ratio ratio-1x1 mb-1"
+                                        <Box sx={{ width: '50px', height: '50px' }}  >
+                                            <Box
+                                                sx={{"position":"relative","width":"100%","& > *":{"position":"absolute","inset":0,"width":"100%","height":"100%"},"aspectRatio":"1 / 1","mb":"0.25rem"}}
 
                                             >
-                                                <div>
+                                                <Box>
                                                     <Viewer scale={13} model={character.model} />
-                                                </div>
-                                            </div>
-                                        </div>
+                                                </Box>
+                                            </Box>
+                                        </Box>
 
                                         <ArticlesButton
                                             small
-                                            className="w-100"
+                                            sx={{"width":"100%"}}
                                             onClick={() => {
                                                 setCharacterEdit(true)
                                             }}
@@ -366,19 +310,15 @@ function OldPretemplateLandingPage() {
                                             Edit
                                         </ArticlesButton>
 
-                                    </div>
+                                    </Box>
 
-                                    <div className="flex-grow-1">
+                                    <Box sx={{"flexGrow":1}}>
 
-                                        <div className="form-group articles mb-0">
+                                        <Box sx={{"mb":"0"}}>
                                             <label htmlFor="nickname">Nickname</label>
-                                            {/* <SingleInput
-                                                value={nickname}
-                                                setValue={setNickname}
-                                                noMargin
-                                            /> */}
-                                            <div className="d-flex align-items-center">
-                                                <input
+                                            
+                                            <Box sx={{"display":"flex","alignItems":"center"}}>
+                                                <Box component="input"
                                                     type="text"
                                                     value={_hasHydrated ? nickname : ''}
                                                     disabled={!_hasHydrated}
@@ -388,29 +328,29 @@ function OldPretemplateLandingPage() {
                                                     onChange={(e) => {
                                                         setNickname(e.target.value)
                                                     }}
-                                                    className={`form-control form-control-sm`}
+                                                    sx={{"display":"block","width":"100%","p":"0.25rem 0.5rem","color":"text.primary","bgcolor":"background.paper","border":1,"borderColor":"divider","borderRadius":"0.375rem","fontSize":"0.875rem","minHeight":"calc(1.5em + 0.5rem + 2px)"}}
                                                 />
                                                 <ArticlesButton
                                                     small
-                                                    className=""
+                                                    
                                                     onClick={() => {
                                                         randomNickname()
                                                     }}
                                                 >
-                                                    <i className="fad fa-random"></i>
+                                                    <ShuffleIcon fontSize="small" sx={{ mr: "0.2rem" }} />
                                                 </ArticlesButton>
-                                            </div>
-                                        </div>
+                                            </Box>
+                                        </Box>
 
-                                        <div className='mt-1' style={{ fontSize: '0.8rem' }}>Visible to all players</div>
+                                        <Box sx={[{"mt":"0.25rem"}, { fontSize: '0.8rem' }]} >Visible to all players</Box>
 
-                                    </div>
+                                    </Box>
 
-                                </div>
+                                </Box>
 
-                                <div className="card-body">
+                                <Box sx={{"flex":"1 1 auto","p":"1rem"}}>
 
-                                    <Link
+                                    <Box component={Link}
                                         href={{
                                             pathname: `/play`
                                             // query: {
@@ -419,20 +359,20 @@ function OldPretemplateLandingPage() {
                                         }}
                                     >
                                         <ArticlesButton
-                                            className="mb-3 w-100"
+                                            sx={{"mb":"1rem","width":"100%"}}
                                             small
                                         >
                                             Play Single Player
                                         </ArticlesButton>
-                                    </Link>
+                                    </Box>
 
-                                    <div className="fw-bold mb-1 small text-center">
+                                    <Box sx={{"fontWeight":700,"mb":"0.25rem","fontSize":"0.875em","textAlign":"center"}}>
                                         {lobbyDetails?.players?.length || 0} player{lobbyDetails?.players?.length !== 1 && 's'} in the lobby.
-                                    </div>
+                                    </Box>
 
-                                    {/* <div className='small fw-bold'>Public Servers</div> */}
+                                    
 
-                                    <div className="servers">
+                                    <Box sx={{"display":"grid","gap":"5px","gridTemplateColumns":"repeat(2, minmax(0, 1fr))"}}>
 
                                         {[1, 2, 3, 4].map(id => {
 
@@ -441,14 +381,14 @@ function OldPretemplateLandingPage() {
                                             )
 
                                             return (
-                                                <div key={id} className="server">
+                                                <Box key={id} sx={{"p":"0.5rem","border":"1px solid rgba(0,0,0,0.25)","display":"flex","flexDirection":"column","alignItems":"center"}}>
 
-                                                    <div className='d-flex justify-content-between align-items-center w-100 mb-2'>
-                                                        <div className="mb-0" style={{ fontSize: '0.9rem' }}><b>Server {id}</b></div>
-                                                        <div className='mb-0'>{lobbyLookup?.players?.length || 0}/4</div>
-                                                    </div>
+                                                    <Box sx={{"display":"flex","justifyContent":"space-between","alignItems":"center","width":"100%","mb":"0.5rem"}}>
+                                                        <Box sx={[{"mb":"0"}, { fontSize: '0.9rem' }]} ><b>Server {id}</b></Box>
+                                                        <Box sx={{"mb":"0"}}>{lobbyLookup?.players?.length || 0}/4</Box>
+                                                    </Box>
 
-                                                    <div className='d-flex justify-content-around w-100 mb-1'>
+                                                    <Box sx={{"display":"flex","justifyContent":"space-around","width":"100%","mb":"0.25rem"}}>
                                                         {[1, 2, 3, 4].map(player_count => {
 
                                                             let playerLookup = false
@@ -456,7 +396,7 @@ function OldPretemplateLandingPage() {
                                                             if (lobbyLookup?.players?.length >= player_count) playerLookup = true
 
                                                             return (
-                                                                <div key={player_count} className="icon" style={{
+                                                                <Box sx={{
                                                                     width: '20px',
                                                                     height: '20px',
                                                                     ...(playerLookup ? {
@@ -465,15 +405,15 @@ function OldPretemplateLandingPage() {
                                                                         backgroundColor: 'gray',
                                                                     }),
                                                                     border: '1px solid black'
-                                                                }}>
+                                                                }} key={player_count}  >
 
-                                                                </div>
+                                                                </Box>
                                                             )
                                                         })}
-                                                    </div>
+                                                    </Box>
 
-                                                    <Link
-                                                        className={``}
+                                                    <Box component={Link}
+                                                        
                                                         href={{
                                                             pathname: `/play`,
                                                             query: {
@@ -482,50 +422,27 @@ function OldPretemplateLandingPage() {
                                                         }}
                                                     >
                                                         <ArticlesButton
-                                                            className="px-5"
+                                                            sx={{"px":"3rem"}}
                                                             small
                                                         >
                                                             Join
                                                         </ArticlesButton>
-                                                    </Link>
+                                                    </Box>
 
-                                                </div>
+                                                </Box>
                                             )
                                         })}
 
-                                    </div>
+                                    </Box>
 
-                                    {/* <div className='small fw-bold  mt-3 mb-1'>Or</div> */}
+                                    
 
-                                    {/* <div className='d-flex'>
-        
-                                    <ArticlesButton
-                                        className={`w-50`}
-                                        onClick={() => {
-                                            // TODO
-                                            alert("Coming Soon!")
-                                        }}
-                                    >
-                                        <i className="fad fa-robot"></i>
-                                        Practice
-                                    </ArticlesButton>
-        
-                                    <ArticlesButton
-                                        className={`w-50`}
-                                        onClick={() => {
-                                            setShowPrivateGameModal(prev => !prev)
-                                        }}
-                                    >
-                                        <i className="fad fa-lock"></i>
-                                        Private Game
-                                    </ArticlesButton>
-        
-                                </div> */}
+                                    
 
-                                    <IsDev className={'mt-3'}>
-                                        <div>
+                                    <IsDev sx={{"mt":"1rem"}}>
+                                        <Box>
                                             <ArticlesButton
-                                                className="w-50"
+                                                sx={{"width":"50%"}}
                                                 variant='warning'
                                                 onClick={() => {
                                                     socket.emit('game:ocean-rings:reset', '');
@@ -533,80 +450,80 @@ function OldPretemplateLandingPage() {
                                             >
                                                 Reset Server
                                             </ArticlesButton>
-                                        </div>
+                                        </Box>
                                     </IsDev>
 
-                                </div>
+                                </Box>
 
-                                <div className="card-footer d-flex flex-wrap justify-content-center">
+                                <Box sx={{"p":"0.5rem 1rem","borderTop":1,"borderColor":"divider","bgcolor":"rgba(0,0,0,0.03)","display":"flex","flexWrap":"wrap","justifyContent":"center"}}>
 
-                                    <div className='d-flex w-50'>
+                                    <Box sx={{"display":"flex","width":"50%"}}>
                                         <ArticlesButton
-                                            className={`w-100`}
+                                            sx={{"width":"100%"}}
                                             small
                                             onClick={() => {
                                                 setShowSettingsModal(true)
                                             }}
                                         >
-                                            <i className="fad fa-cog"></i>
+                                            <SettingsIcon fontSize="small" sx={{ mr: "0.2rem" }} />
                                             Settings
                                         </ArticlesButton>
                                         <ArticlesButton
-                                            className={``}
+                                            
                                             small
                                             onClick={() => {
                                                 setDarkMode(!darkMode);
                                             }}
                                         >
-                                            <i className="fad fa-palette"></i>
+                                            <PaletteIcon fontSize="small" sx={{ mr: "0.2rem" }} />
                                         </ArticlesButton>
-                                    </div>
+                                    </Box>
 
                                     <ArticlesButton
-                                        className={`w-50`}
+                                        sx={{"width":"50%"}}
                                         small
                                         onClick={() => {
                                             setShowInfoModal(true)
                                         }}
                                     >
-                                        <i className="fad fa-info-square"></i>
+                                        <InfoIcon fontSize="small" sx={{ mr: "0.2rem" }} />
                                         Info
                                     </ArticlesButton>
 
-                                    <Link href={'https://github.com/Articles-Joey/ocean-rings'} className='w-50' target="_blank" rel="noopener noreferrer">
+                                    <Box component={Link} href={'https://github.com/Articles-Joey/ocean-rings'} sx={{"width":"50%"}} target="_blank" rel="noopener noreferrer">
                                         <ArticlesButton
-                                            className={`w-100`}
+                                            sx={{"width":"100%"}}
                                             small
                                             onClick={() => {
 
                                             }}
                                         >
-                                            <i className="fab fa-github"></i>
+                                            <GitHubIcon fontSize="small" sx={{ mr: "0.2rem" }} />
                                             Github
                                         </ArticlesButton>
-                                    </Link>
+                                    </Box>
 
                                     <ArticlesButton
-                                        className={`w-50`}
+                                        sx={{"width":"50%"}}
                                         small
                                         onClick={() => {
                                             setShowCreditsModal(true);
                                         }}
                                     >
-                                        <i className="fad fa-users"></i>
+                                        <GroupIcon fontSize="small" sx={{ mr: "0.2rem" }} />
                                         Credits
                                     </ArticlesButton>
 
-                                </div>
+                                </Box>
 
-                            </div>
+                            </Box>
 
                             <ReturnToLauncherButton />
 
-                        </div>
+                        </Box>
                     }
 
-                    {/* <Ad section={"Games"} section_id={game_name} /> */}
+                    
                     <GameScoreboard
                         game={game_name}
                         style="Default"
@@ -623,7 +540,7 @@ function OldPretemplateLandingPage() {
                         userDetailsLoading={userDetailsLoading}
                     />
 
-                </div>
-            </div>
+                </Box>
+            </Box>
     )
 }

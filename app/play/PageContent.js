@@ -16,6 +16,7 @@ import AudioHandler from '@/components/Handlers/AudioHandler';
 import GameMenu from '@articles-media/articles-dev-box/GameMenu';
 import { useStore } from '@/hooks/useStore';
 import classNames from 'classnames';
+import Box from '@mui/material/Box';
 import SinglePlayerHandler from '@/components/Handlers/SinglePlayerHandler';
 import GameOverModal from '@/components/UI/GameOverModal';
 const GameCanvas = dynamic(() => import('@/components/Game/GameCanvas'), {
@@ -76,7 +77,23 @@ export default function OceanRingsGamePage() {
 
     return (
 
-        <div
+        <Box
+            sx={{
+                position: 'relative',
+                display: 'flex',
+                '& .panel-left': { zIndex: '2 !important' },
+                '& .background': {
+                    position: 'fixed', inset: 0, height: '100%', width: '100%', zIndex: 0, overflow: 'hidden',
+                    '& img': { filter: 'blur(2px) brightness(0.80)', transform: 'scale(1.05)' },
+                },
+                '& .container': { position: 'relative', zIndex: 1 },
+                '& .debug-info, & .game-info': {
+                    height: 'calc(100vh - 100px)', width: 300, flexShrink: 0,
+                    '& .card': { height: '100%' },
+                },
+                '& .game': { p: '0.5rem 1rem', display: 'flex', justifyContent: 'center' },
+                '& .game-panel': { width: '100%' },
+            }}
             className={classNames(
                 `${process.env.NEXT_PUBLIC_GAME_KEY}-game-page`,
                 {
@@ -112,7 +129,10 @@ export default function OceanRingsGamePage() {
 
             <SinglePlayerHandler />
 
-            <div className='canvas-wrap'>
+            <Box sx={{
+                position: 'relative', width: '100vw', height: '100vh',
+                '& canvas': { position: 'absolute', width: '100%', height: '100%', left: 0, top: 0 },
+            }}>
 
                 <TouchControls />
 
@@ -120,8 +140,8 @@ export default function OceanRingsGamePage() {
                     key={sceneKey}
                 />
 
-            </div>
+            </Box>
 
-        </div>
+        </Box>
     );
 }

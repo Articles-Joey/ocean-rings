@@ -1,4 +1,6 @@
+"use client";
 import { memo, useEffect, useRef, useState } from "react";
+import Box from '@mui/material/Box';
 
 import ArticlesButton from "@/components/UI/Button"
 import useTouchControlsStore from "@/hooks/useTouchControlsStore";
@@ -170,21 +172,26 @@ function TouchControlsBase(props) {
     }, [touchControlsEnabled, sceneKey]);
 
     return (
-        <div className={`touch-controls-area ${!touchControlsEnabled && 'd-none'}`}>
+        <Box data-hide-in-screenshot-mode="true" sx={{
+            position: 'absolute', right: 0, width: '100%', height: '100%', zIndex: 1,
+            display: touchControlsEnabled ? 'flex' : 'none',
+            justifyContent: 'space-between', alignItems: 'center', overflow: 'hidden',
+        }}>
 
-            <div className="w-100 h-100">
-                <div style={{
+            <Box sx={{ width: '100%', height: '100%' }}>
+                <Box sx={{
                     position: 'absolute',
                     width: '100%',
                     height: '100%',
                     // backgroundColor: 'black',
                     zIndex: 1,
-                }} id="zone_joystick"></div>
-            </div>
+                    touchAction: 'none',
+                }} id="zone_joystick" />
+            </Box>
 
             {/* <JumpButton /> */}
 
-        </div>
+        </Box>
     )
 }
 
