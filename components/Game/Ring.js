@@ -1,208 +1,141 @@
-import { useCylinder, useSphere } from "@react-three/cannon";
-import { Text } from "@react-three/drei";
-import { useFrame } from "@react-three/fiber";
-import { memo, useEffect, useMemo, useRef, useState } from "react"
-
-import generateRandomInteger from "@/util/generateRandomInteger"
-import getRandomHexColor from "@/util/getRandomHexColor"
+import {
+    BallCollider,
+    RigidBody,
+    useBeforePhysicsStep,
+} from "@react-three/rapier";
+import { memo, useCallback, useMemo, useRef, useState } from "react";
 import { useGameStore } from "@/hooks/useGameStore";
-import Ground from "./Ground";
-import Decorations from "./Decorations";
-import { ModelKennyNLPirateShipWreck } from "@/components/Game/ship_wreck";
-import { degToRad } from "three/src/math/MathUtils.js";
+import { useStore } from "@/hooks/useStore";
 import Shadow from "./Shadow";
-import { hillHeight } from "@/util/hillHeight";
 
-function Ring(props) {
+const RING_COLORS = [
+    "#30c6ed",
+    "#ff8b47",
+    "#a987ff",
+    "#ff72b2",
+    "#5ee6a4",
+    "#ffe16a",
+];
+const BAND_ARC = Math.PI / 5;
+const BAND_ANGLES = [0, Math.PI / 2, Math.PI, Math.PI * 1.5];
 
-    // Local hit tracking — no store needed
-    const hitRef = useRef(false);       // set to true when player collides with this ring
-    const lockedRef = useRef(false);    // prevents overwriting color once it's been set
-    const [innerColor, setInnerColor] = useState('gray');
+function Ring({ position, id }) {
+    const body = useRef();
+    const hitRef = useRef(false);
+    const [hit, setHit] = useState(false);
+    const initialPosition = useRef(position).current;
+    const userData = useMemo(
+        () => ({ isObstacle: true, obstacleId: id }),
+        [id],
+    );
+    const debug = useStore((state) => state.debug);
+    const showPhysicsDebug = useStore(
+        (state) => state?.debugConfig?.showPhysicsDebug,
+    );
+    const color = useMemo(
+        () => RING_COLORS[Math.floor(Math.random() * RING_COLORS.length)],
+        [],
+    );
+    const opacity = Math.max(0, Math.min(1, 1 - Math.max(0, position[2]) / 10));
+    const debugColor =
+        position[2] < 0 ? "#aab8c8" : hit ? "#43ef83" : "#ff5366";
 
-    const distance = useGameStore(state => state.distance)
+    useBeforePhysicsStep(() => {
+        body.current?.setNextKinematicTranslation({
+            x: position[0],
+            y: position[1],
+            z: position[2],
+        });
+    });
 
-    // Calculate opacity based on position relative to player
-    // Rings fade out as they move from z=0 to z=10 (past the player)
-    const calculateOpacity = () => {
-        const z = props.position[2];
-        if (z < 0) return 1; // Before player, fully visible
-        if (z > 10) return 0; // Past despawn point, invisible
-        // Fade from 1 to 0 between z=0 and z=10
-        return 1 - (z / 10);
-    };
-
-    const ringOpacity = calculateOpacity();
-
-    // const ref = useRef();
-    const [ref, api] = useSphere(() => ({
-        // mass: 0,
-        // type: 'Static',
-        isTrigger: true,
-        onCollide: (e) => {
-            // Mark hit using a ref — avoids stale closure issues entirely
-            hitRef.current = true;
-        },
-        args: [0.5, 0.5, 8],
-        position: props.position,
-        userData: {
-            isObstacle: true,
-            obstacleId: props.id
-        }
-    }))
-
-    useEffect(() => {
-
-        api.position.set(...props.position)
-
-        // When ring crosses z=0 it has just passed the player — lock in hit or miss color
-        if (props.position[2] >= 0 && !lockedRef.current) {
-            lockedRef.current = true;
-            setInnerColor(hitRef.current ? 'green' : 'red');
-        }
-
-    }, [props.position])
-
-    // const [ref] = useCylinder(() => ({
-    //     mass: 0,
-    //     isTrigger: true,
-    //     position: props.position
-    //     // rotation: [-Math.PI / 2, 0, 0],
-    //     // ...props,
-    // }));
-
-    // useFrame(() => {
-    //     if (ref.current) {
-
-    //         const newZ = ref.current.position.z
-    //         // const newZ = ref.current.position.z + 0.05;
-    //         // ref.current.position.z = newZ;
-    //         // setZPosition(newZ);
-
-    //         if (
-    //             newZ
-    //             <
-    //             Math.abs(props.position[2]) + 10
-    //         ) {
-    //             setHasPassed(false)
-    //         } else {
-    //             setHasPassed(true)
-    //         }
-
-    //         if (
-    //             newZ
-    //             <
-    //             Math.abs(props.position[2]) + 15
-    //         ) {
-    //             setHasPassedFar(false)
-    //         } else {
-    //             setHasPassedFar(true)
-    //         }
-
-    //     }
-    // });
-
-    const randomColor = useMemo(() => {
-        return getRandomHexColor()
-    }, [])
-
-    // const ring = useMemo(() => {
-
-    //     return (
-
-    //     )
-
-    // }, [zPosition])
-
-    // function hasPassed(pos) {
-
-    //     if (
-    //         zPosition.toFixed(0)
-    //         >
-    //         Math.abs(pos)
-    //     ) {
-    //         return true
-    //     } else {
-    //         return false
-    //     }
-
-    // }
+    const handleIntersection = useCallback(({ other }) => {
+        if (!other.rigidBody?.userData?.isPlayer || hitRef.current) return;
+        const state = useGameStore.getState();
+        if (state.gameState.status !== "In Progress") return;
+        hitRef.current = true;
+        setHit(true);
+        state.addScore();
+    }, []);
 
     return (
-        <group ref={ref}>
-
-            {ringOpacity > 0 && (
+        <>
+            {opacity > 0 && (
                 <Shadow
                     radius={1.2}
-                    opacity={0.6 * ringOpacity}
-                    position={[
-                        0,
-                        -2 + hillHeight(props.position[0], props.position[2] - distance) + 0.05 - props.position[1],
-                        0
-                    ]}
+                    opacity={0.6 * opacity}
+                    position={position}
                 />
             )}
-
-            {
-                // (
-                //     zPosition.toFixed(0)
-                //     <
-                //     Math.abs(props.position[2])
-                // )
-                // &&
-                <group
-                // position={props.position}
-                >
-
-                    {ringOpacity > 0 &&
+            <RigidBody
+                ref={body}
+                type="kinematicPosition"
+                colliders={false}
+                position={initialPosition}
+                userData={userData}
+            >
+                <BallCollider
+                    args={[0.5]}
+                    sensor
+                    onIntersectionEnter={handleIntersection}
+                />
+            </RigidBody>
+            {opacity > 0 && (
+                <group position={position}>
+                    <mesh renderOrder={2}>
+                        <torusGeometry args={[1, 0.21, 8, 48]} />
+                        <meshStandardMaterial
+                            color={color}
+                            emissive={color}
+                            emissiveIntensity={0.18}
+                            roughness={0.75}
+                            metalness={0}
+                            toneMapped={false}
+                            transparent
+                            opacity={opacity}
+                            depthWrite={opacity === 1}
+                            flatShading
+                        />
+                    </mesh>
+                    {BAND_ANGLES.map((angle) => (
                         <mesh
-                        // position={props.position}
+                            key={angle}
+                            rotation={[0, 0, angle - BAND_ARC / 2]}
+                            renderOrder={3}
                         >
-                            <torusGeometry attach="geometry" args={[1, 0.1]} />
+                            <torusGeometry args={[1, 0.216, 8, 8, BAND_ARC]} />
                             <meshStandardMaterial
-                                attach="material"
-                                color={randomColor}
-                                transparent={true}
-                                opacity={ringOpacity}
+                                color="#ffffff"
+                                emissive="#dceaff"
+                                emissiveIntensity={0.12}
+                                roughness={0.75}
+                                metalness={0}
+                                toneMapped={false}
+                                transparent
+                                opacity={opacity}
+                                depthWrite={opacity === 1}
+                                flatShading
+                                polygonOffset
+                                polygonOffsetFactor={-1}
+                                polygonOffsetUnits={-1}
                             />
                         </mesh>
-                    }
-
-                    {ringOpacity > 0 && <mesh
-                        // ref={refCylinder}as
-                        // position={props.position}
-                        rotation={[-Math.PI / 2, 0, 0]}
-                    >
-
-                        <cylinderGeometry args={[0.5, 0.5, 0.25]} />
-
-                        <meshStandardMaterial
-                            // opacity={innerColor !== 'gray' ? 0.85 : ringOpacity * 0.5}
-                            opacity={ringOpacity}
-                            transparent={true}
-                            color={innerColor}
-                        />
-
-                        {/* {((Math.abs(props.position[2]) - zPosition.toFixed(0)) < 100) &&
-                            <Text
-                                position={[0, -1, 1]}
-                                scale={0.6}
-                                color="black" rotation={[Math.PI / 2, 0, 0]} anchorX="center" anchorY="middle"
-                            >
-                                {Math.abs(props.position[2])}/{zPosition.toFixed(0)}
-                                <meshStandardMaterial attach="material" opacity={hasPassed ? 0 : 1} />
-                            </Text>
-                        } */}
-
-                    </mesh>}
-
+                    ))}
+                    {showPhysicsDebug && (
+                        <mesh>
+                            <sphereGeometry args={[0.5, 16, 16]} />
+                            <meshBasicMaterial
+                                color={debugColor}
+                                transparent
+                                opacity={0.4}
+                                wireframe
+                                depthWrite={false}
+                            />
+                        </mesh>
+                    )}
                 </group>
-            }
-
-
-
-        </group>
+            )}
+        </>
     );
 }
 
-export default memo(Ring)
+export default memo(Ring);

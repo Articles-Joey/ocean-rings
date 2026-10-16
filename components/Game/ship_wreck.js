@@ -4,8 +4,8 @@ Command: npx gltfjsx@6.5.2 models\ship_wreck.gltf --output output\ship_wreck.js 
 Files: models\ship_wreck.gltf [6.79KB] > F:\My Documents\Articles Media\AMCOT\Models\Kenny\kenney_pirate-kit\JSX\output\ship_wreck-transformed.glb [13.46KB] (-98%)
 */
 
-import React from 'react'
-import { useGLTF } from '@react-three/drei'
+import React from "react";
+import { useGLTF } from "@react-three/drei";
 
 // let link = `${process.env.NEXT_PUBLIC_CDN}games/Assets/KennyNL/Pirate/Models/ship_wreck.glb`
 
@@ -14,22 +14,38 @@ import { useGLTF } from '@react-three/drei'
 //     link = `/models/decorations/ship_wreck.glb`
 // }
 
-import getAssetSource from '@articles-media/articles-dev-box/getAssetSource';
+import getAssetSource from "@articles-media/articles-dev-box/getAssetSource";
 
-const link = getAssetSource(
-  `/models/decorations/ship_wreck.glb`
-);
+const link = getAssetSource(`/models/decorations/ship_wreck.glb`);
 
 export function ModelKennyNLPirateShipWreck(props) {
-  const { nodes, materials } = useGLTF(link)
-  return (
-    <group {...props} dispose={null}>
-      <group name="ship_wreck_8angles" position={[0, 0, 0]}>
-        <mesh name="ship_wreck_8angles_1" castShadow receiveShadow geometry={nodes.ship_wreck_8angles_1.geometry} material={materials.PaletteMaterial002} />
-        <mesh name="ship_wreck_8angles_2" castShadow receiveShadow geometry={nodes.ship_wreck_8angles_2.geometry} material={materials.PaletteMaterial001} />
-      </group>
-    </group>
-  )
+    const { nodes, materials } = useGLTF(link);
+    return (
+        <group
+            {...props}
+            dispose={null}
+        >
+            <group
+                name="ship_wreck_8angles"
+                position={[0, 0, 0]}
+            >
+                <mesh
+                    name="ship_wreck_8angles_1"
+                    castShadow
+                    receiveShadow
+                    geometry={nodes.ship_wreck_8angles_1.geometry}
+                    material={materials.PaletteMaterial002}
+                />
+                <mesh
+                    name="ship_wreck_8angles_2"
+                    castShadow
+                    receiveShadow
+                    geometry={nodes.ship_wreck_8angles_2.geometry}
+                    material={materials.PaletteMaterial001}
+                />
+            </group>
+        </group>
+    );
 }
 
-useGLTF.preload(link)
+useGLTF.preload(link);

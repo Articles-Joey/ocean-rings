@@ -4,8 +4,8 @@ Command: npx gltfjsx@6.5.2 models\Worm.glb --output output\Worm.js --transform -
 Files: models\Worm.glb [15.93KB] > F:\My Documents\Articles Media\AMCOT\Models\Quaternius\Fishing\JSX\output\Worm-transformed.glb [3.36KB] (79%)
 */
 
-import React from 'react'
-import { useGLTF } from '@react-three/drei'
+import React from "react";
+import { useGLTF } from "@react-three/drei";
 
 // let link = `models/player/Worm.glb`
 
@@ -14,22 +14,40 @@ import { useGLTF } from '@react-three/drei'
 //     link = `/models/player/Worm.glb`
 // }
 
-import getAssetSource from '@articles-media/articles-dev-box/getAssetSource';
+import getAssetSource from "@articles-media/articles-dev-box/getAssetSource";
 
-const link = getAssetSource(
-  `/models/player/Worm.glb`
-);
+const link = getAssetSource(`/models/player/Worm.glb`);
 
 export function ModelQuaterniusFishingWorm(props) {
-  const { nodes, materials } = useGLTF(link)
-  return (
-    <group {...props} dispose={null}>
-      <group name="Worm" position={[0, 0, 0]} rotation={[Math.PI / 2, 0, 0]} scale={6.02}>
-        <mesh name="Cylinder014" castShadow receiveShadow geometry={nodes.Cylinder014.geometry} material={materials.Worm} />
-        <mesh name="Cylinder014_1" castShadow receiveShadow geometry={nodes.Cylinder014_1.geometry} material={materials.Black} />
-      </group>
-    </group>
-  )
+    const { nodes, materials } = useGLTF(link);
+    return (
+        <group
+            {...props}
+            dispose={null}
+        >
+            <group
+                name="Worm"
+                position={[0, 0, 0]}
+                rotation={[Math.PI / 2, 0, 0]}
+                scale={6.02}
+            >
+                <mesh
+                    name="Cylinder014"
+                    castShadow
+                    receiveShadow
+                    geometry={nodes.Cylinder014.geometry}
+                    material={materials.Worm}
+                />
+                <mesh
+                    name="Cylinder014_1"
+                    castShadow
+                    receiveShadow
+                    geometry={nodes.Cylinder014_1.geometry}
+                    material={materials.Black}
+                />
+            </group>
+        </group>
+    );
 }
 
-useGLTF.preload(link)
+useGLTF.preload(link);

@@ -1,29 +1,23 @@
-import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { Debug, Physics } from '@react-three/cannon';
-import { Center, Image, OrbitControls, Plane, Sky, Stats, Text, Text3D } from '@react-three/drei'
-import { memo, Suspense, useMemo, useRef } from 'react';
-// import MovingPlatform from './Platforms/MovingPlatform';
-// import { useGameStore } from '@/hooks/useGameStore';
-// import Bounds from './Bounds';
-import Player from './Player';
-// import Rings from './Rings';
-// import getRandomHexColor from 'util/getRandomHexColor';
-// import Decorations from './Decorations';
-import OceanSurface from './OceanSurface';
-import { useStore } from '@/hooks/useStore';
-import GameSections from './GameSections';
-// import Obstacles from './Obstacles';
+import { Canvas, useFrame, useThree } from "@react-three/fiber";
+import { Physics } from "@react-three/rapier";
+import { OrbitControls, Stats } from "@react-three/drei";
+import { memo, Suspense } from "react";
+import Player from "./Player";
+import OceanSurface from "./OceanSurface";
+import { useStore } from "@/hooks/useStore";
+import GameSections from "./GameSections";
 
 const TARGET = [0, 1, 0];
 const CAM_Y = 5;
 const CAM_Z = 20;
-const SWING_RANGE = 3;   // units left/right from center
-const SWING_SPEED = 0.3; // radians per second
+const SWING_RANGE = 3;
+const SWING_SPEED = 0.3;
 
 function LandingCamera() {
     const { camera } = useThree();
     useFrame(({ clock }) => {
-        camera.position.x = Math.sin(clock.elapsedTime * SWING_SPEED) * SWING_RANGE;
+        camera.position.x =
+            Math.sin(clock.elapsedTime * SWING_SPEED) * SWING_RANGE;
         camera.position.y = CAM_Y;
         camera.position.z = CAM_Z;
         camera.lookAt(...TARGET);
@@ -31,100 +25,44 @@ function LandingCamera() {
     return null;
 }
 
-function GameCanvas({
-    landingAnimationMode
-}) {
-
-    // const {
-    //     // setPlayerData, 
-    //     players
-    // } = props;
-
-    // const generateRandomPlatforms = useMemo((platformNumbers) => {
-
-    //     const originalMaterial = [...Array(platformNumbers)].map((item, i) => {
-    //         return (
-    //             <OneWayPlatform key={i} color="pink" position={[generateRandomInteger(-1.5, 1.5), (16 + (i * 1.5)), 0]} />
-    //         )
-    //     })
-
-    //     return originalMaterial
-
-    // }, [])
-
-    // const { playerLocation } = useGameStore()
-
-    // const {
-    //     debug,
-    // } = useGameStore(state => ({
-    //     debug: state.debug,
-    // }));
-
-    const debug = useStore(state => state.debug)
-    const darkMode = useStore(state => state.darkMode)
+function GameCanvas({ landingAnimationMode }) {
+    const debug = useStore((state) => state.debug);
+    const darkMode = useStore((state) => state.darkMode);
     const showStats = useStore((state) => state?.debugConfig?.showStats);
+    const showPhysicsDebug = useStore(
+        (state) => state?.debugConfig?.showPhysicsDebug,
+    );
 
     return (
         <Canvas camera={{ fov: 45, position: [0, 5, 20] }}>
-
-            {showStats && <>
-                <Stats className="stats-overlay" />
-            </>}
-
-            {/* <color
+            {showStats && <Stats className="stats-overlay" />}
+            <color
                 attach="background"
-                args={[0, 0, 0]}
-            /> */}
-
-            {/* <Sky
-                // scale={3000}
-            /> */}
-
-            <color attach="background" args={['#215776']} />
-            <fog attach="fog" args={['#215776', 10, 50]} />
-
-            {/* Add your 3D scene components here */}
+                args={["#215776"]}
+            />
+            <fog
+                attach="fog"
+                args={["#215776", 10, 50]}
+            />
             <ambientLight intensity={darkMode ? 1 : 2} />
-            {/* <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} />
-            <pointLight position={[-10, -10, -10]} /> */}
-
-            {/* <BackWalls /> */}
-
-            <Physics gravity={[0, 0, 0]}>
-
-                <Debug color="black" scale={debug ? 1 : 0}>
-
-                    <Suspense fallback={null}>
-
-                        <OceanSurface />
-    
-                        <GameSections
-                            landingAnimationMode={landingAnimationMode}
-                        />
-    
-                        {!landingAnimationMode &&
-                            <Suspense>
-                                <Player
-                                    position={[0, 1, 0]}
-                                />
-                            </Suspense>
-                        }
-
-                    </Suspense>
-
-                </Debug>
-
-            </Physics>
-
+            <Suspense fallback={null}>
+                <Physics
+                    gravity={[0, 0, 0]}
+                    debug={showPhysicsDebug}
+                    colliders={false}
+                >
+                    <OceanSurface />
+                    <GameSections landingAnimationMode={landingAnimationMode} />
+                    {!landingAnimationMode && <Player position={[0, 2, 0]} />}
+                </Physics>
+            </Suspense>
             <OrbitControls
                 target={TARGET}
                 enabled={!landingAnimationMode}
             />
-
             {landingAnimationMode && <LandingCamera />}
-
         </Canvas>
-    )
+    );
 }
 
-export default memo(GameCanvas)
+export default memo(GameCanvas);

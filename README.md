@@ -2,7 +2,7 @@
 
 The objective is to swim through the correct ring as depicted in the bottom right. Players move at a constant speed toward oncoming rings and the movement of the rings varies. If there is more than one player playing and all players get through their rings, a group bonus is given!
 
-![Preview](public/img/preview.webp)
+![Preview](public/img/previews/preview.webp)
 
 ## Getting Started
 
@@ -28,6 +28,7 @@ Aiming to have multiplayer via P2P and Websockets. Websocket backend code is not
 - Peer mode
 
 ## Inspiration
+
 Inspired by the minigame inside Toontown
 
 https://toontownrewritten.fandom.com/wiki/Ring_Game
@@ -35,6 +36,8 @@ https://toontownrewritten.fandom.com/wiki/Ring_Game
 ![Toontown Screenshot](public/img/toontown-preview.webp)
 
 ## Attributions
+
 [Fish Models - Quaternius](https://quaternius.com/packs/cutefish.html)  
 [Pirate Ship - Kenney.nl](https://kenney.nl/assets/pirate-kit)  
-[Kelp - Google Poly](https://poly.pizza/m/4cFllH6Iazk)
+[Kelp - Google Poly](https://poly.pizza/m/4cFllH6Iazk)  
+[Piano Tuna - GREENCAT](https://sketchfab.com/3d-models/piano-tuna-6283ec5fc52b406b9be281b2d0456d16)

@@ -4,10 +4,10 @@ Command: npx gltfjsx@6.5.2 models\ZebraClownFish.glb --output output\ZebraClownF
 Files: models\ZebraClownFish.glb [145.23KB] > F:\My Documents\Articles Media\AMCOT\Models\Quaternius\Fishing\JSX\output\ZebraClownFish-transformed.glb [31.62KB] (78%)
 */
 
-import React from 'react'
-import { useGraph } from '@react-three/fiber'
-import { useGLTF, useAnimations } from '@react-three/drei'
-import { SkeletonUtils } from 'three-stdlib'
+import React from "react";
+import { useGraph } from "@react-three/fiber";
+import { useGLTF, useAnimations } from "@react-three/drei";
+import { SkeletonUtils } from "three-stdlib";
 
 // let link = `${process.env.NEXT_PUBLIC_CDN}games/Ocean Rings/player/ZebraClownFish.glb`
 // let link = `models/player/ZebraClownFish.glb`
@@ -17,32 +17,50 @@ import { SkeletonUtils } from 'three-stdlib'
 //     link = `/models/decorations/player/ZebraClownFish.glb`
 // }
 
-import getAssetSource from '@articles-media/articles-dev-box/getAssetSource';
+import getAssetSource from "@articles-media/articles-dev-box/getAssetSource";
 
-const link = getAssetSource(
-  `models/player/ZebraClownFish.glb`
-);
+const link = getAssetSource(`models/player/ZebraClownFish.glb`);
 
 export function ModelQuaterniusFishingZebraClownFish(props) {
-  const group = React.useRef()
-  const { scene, animations } = useGLTF(link)
-  const clone = React.useMemo(() => SkeletonUtils.clone(scene), [scene])
-  const { nodes, materials } = useGraph(clone)
-  const { actions } = useAnimations(animations, group)
-  return (
-    <group ref={group} {...props} dispose={null} scale={0.4}>
-      <group name="Scene">
-        <group name="Fish_Armature">
-          <primitive object={nodes.Main1} />
+    const group = React.useRef();
+    const { scene, animations } = useGLTF(link);
+    const clone = React.useMemo(() => SkeletonUtils.clone(scene), [scene]);
+    const { nodes, materials } = useGraph(clone);
+    const { actions } = useAnimations(animations, group);
+    return (
+        <group
+            ref={group}
+            {...props}
+            dispose={null}
+            scale={0.4}
+        >
+            <group name="Scene">
+                <group name="Fish_Armature">
+                    <primitive object={nodes.Main1} />
+                </group>
+                <group name="ZebraClownfish">
+                    <skinnedMesh
+                        name="Cube136"
+                        geometry={nodes.Cube136.geometry}
+                        material={materials.ZebraClownFish_Light}
+                        skeleton={nodes.Cube136.skeleton}
+                    />
+                    <skinnedMesh
+                        name="Cube136_1"
+                        geometry={nodes.Cube136_1.geometry}
+                        material={materials.ZebraClownFish_Main}
+                        skeleton={nodes.Cube136_1.skeleton}
+                    />
+                    <skinnedMesh
+                        name="Cube136_2"
+                        geometry={nodes.Cube136_2.geometry}
+                        material={materials.Eyes}
+                        skeleton={nodes.Cube136_2.skeleton}
+                    />
+                </group>
+            </group>
         </group>
-        <group name="ZebraClownfish">
-          <skinnedMesh name="Cube136" geometry={nodes.Cube136.geometry} material={materials.ZebraClownFish_Light} skeleton={nodes.Cube136.skeleton} />
-          <skinnedMesh name="Cube136_1" geometry={nodes.Cube136_1.geometry} material={materials.ZebraClownFish_Main} skeleton={nodes.Cube136_1.skeleton} />
-          <skinnedMesh name="Cube136_2" geometry={nodes.Cube136_2.geometry} material={materials.Eyes} skeleton={nodes.Cube136_2.skeleton} />
-        </group>
-      </group>
-    </group>
-  )
+    );
 }
 
-useGLTF.preload(link)
+useGLTF.preload(link);

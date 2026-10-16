@@ -9,32 +9,29 @@ const fetcher = (obj) => {
         method: "GET",
         credentials: "same-origin",
         headers: {
-            "Accept": "application/json",
+            Accept: "application/json",
         },
-    })
-        .then((res) => {
-            if (!res.ok) throw new Error("Network response was not ok");
-            return res.json();
-        });
+    }).then((res) => {
+        if (!res.ok) throw new Error("Network response was not ok");
+        return res.json();
+    });
 };
 
 const options = {
-    dedupingInterval: ((1000 * 60) * 30),
+    dedupingInterval: 1000 * 60 * 30,
     // fallbackData: []
-}
+};
 
 const useGameScoreboard = (params) => {
-
     const { data, error, isLoading, isValidating, mutate } = useSWR(
-        params?.game ?
-            {
-                url: "/api/community/games/scoreboard",
-                game: params.game,
-            }
-            :
-            null,
+        params?.game
+            ? {
+                  url: "/api/community/games/scoreboard",
+                  game: params.game,
+              }
+            : null,
         fetcher,
-        options
+        options,
     );
 
     return {

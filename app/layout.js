@@ -8,25 +8,24 @@ import packageInfo from "@/package.json";
 import "@articles-media/articles-gamepad-helper/dist/articles-gamepad-helper.css";
 
 export const metadata = {
-  title: "Ocean Rings",
-  description: packageInfo.description,
+    title: "Ocean Rings",
+    description: packageInfo.description,
 };
 
 export default function RootLayout({ children }) {
-  return (
-    <html lang="en">
-
-      <body>
-        <AppRouterCacheProvider options={{ enableCssLayer: true }}>
-          <AppThemeProvider>
-            <LayoutClient />
-            <Suspense>
-              <SocketLogicHandler />
-            </Suspense>
-            {children}
-          </AppThemeProvider>
-        </AppRouterCacheProvider>
-      </body>
-    </html>
-  );
+    return (
+        <html lang="en">
+            <body>
+                <AppRouterCacheProvider options={{ enableCssLayer: true }}>
+                    <AppThemeProvider>
+                        <LayoutClient />
+                        <Suspense>
+                            <SocketLogicHandler />
+                        </Suspense>
+                        {children}
+                    </AppThemeProvider>
+                </AppRouterCacheProvider>
+            </body>
+        </html>
+    );
 }

@@ -1,297 +1,231 @@
-import { useFrame, useThree } from "@react-three/fiber"
-import { useSphere } from "@react-three/cannon"
-import { useGLTF, useAnimations, Text } from '@react-three/drei'
-import { memo, useEffect, useRef } from "react"
-import { Vector3 } from "three"
-import * as THREE from 'three';
-import { useKeyboard } from "@/hooks/useKeyboard"
-
-import { useControllerStore } from '@/hooks/useControllerStore';
-
+import { useFrame, useThree } from "@react-three/fiber";
+import {
+    BallCollider,
+    RigidBody,
+    useBeforePhysicsStep,
+} from "@react-three/rapier";
+import { Suspense, useEffect, useMemo, useRef } from "react";
+import { MathUtils, Vector3 } from "three";
+import { useSearchParams } from "next/navigation";
+import { useKeyboard } from "@/hooks/useKeyboard";
+import { useControllerStore } from "@/hooks/useControllerStore";
 import { useGameStore } from "@/hooks/useGameStore";
 import useTouchControlsStore from "@/hooks/useTouchControlsStore";
-
-import ClownfishModel from "@/components/PlayerModels/Clownfish"
-import BoneFishModel from "@/components/PlayerModels/BoneFish"
-import { useLocalStorageNew } from "@/hooks/useLocalStorageNew"
-import Shadow from "./Shadow"
-import { useStore } from "@/hooks/useStore"
-import { useSocketStore } from "@/hooks/useSocketStore"
-import { useSearchParams } from "next/navigation"
-import { degToRad } from "three/src/math/MathUtils.js"
-import { hillHeight } from "@/util/hillHeight"
+import { useStore } from "@/hooks/useStore";
+import { useSocketStore } from "@/hooks/useSocketStore";
+import ClownfishModel from "@/components/PlayerModels/Clownfish";
+import BoneFishModel from "@/components/PlayerModels/BoneFish";
+import { ModelQuaterniusFishingGoldfish } from "@/components/PlayerModels/Goldfish";
+import { ModelAnglerfish } from "@/components/PlayerModels/Anglerfish";
+import { ModelQuaterniusFishingWorm } from "@/components/PlayerModels/Worm";
+import { ModelQuaterniusFishingZebraClownFish } from "@/components/PlayerModels/ZebraClownFish";
+import ModelToonCharacter from "@/components/Models/ModelToonCharacter";
+import Shadow from "./Shadow";
+import PlayerAppearance from "./PlayerAppearance";
+import { degToRad } from "three/src/math/MathUtils.js";
 
 const JUMP_FORCE = 6;
 const SPEED = 4;
+const TOON_PLAYER_SCALE = 0.01 / 6;
+const PLAYER_DATA = { isPlayer: true };
+const PLAYER_MODELS = {
+    Clownfish: ClownfishModel,
+    "Bone Fish": BoneFishModel,
+    Goldfish: ModelQuaterniusFishingGoldfish,
+    "Angler Fish": ModelAnglerfish,
+    Worm: ModelQuaterniusFishingWorm,
+    "Zebra Clownfish": ModelQuaterniusFishingZebraClownFish,
+};
 
-let lastLocation
-
-function myToFixed(i, digits) {
-    var pow = Math.pow(10, digits);
-
-    return Math.floor(i * pow) / pow;
-}
-
-function PlayerBase(props) {
-
-    const searchParams = useSearchParams()
-    const params = Object.fromEntries(searchParams.entries());
-    const { server } = params
-
-    // const { setPlayerData, teleportPlayer, setTeleportPlayer } = props;
-
-    const { socket } = useSocketStore()
-
-    const {
-        cameraMode, setCameraMode,
-        teleport, setTeleport,
-        setPlayerLocation,
-        maxHeight, setMaxHeight,
-        shift, setShift,
-        distance,
-        addDistance,
-        addScore,
-        // debug
-    } = useGameStore()
-
-    const debug = useStore(state => state.debug)
-    const status = useGameStore(state => state.gameState.status)
-
-    const {
-        touchControls, setTouchControls
-    } = useTouchControlsStore()
-
-    const { controllerState, setControllerState } = useControllerStore()
-
-    const [character, setCharacter] = useLocalStorageNew("game:ocean-rings:character", {
-        model: 'Clownfish',
-        color: '#000000'
-    })
-
-    // Attach event listeners when the component mounts
-    useEffect(() => {
-
-        if (controllerState.axes && Math.abs(controllerState?.axes[0]) > 0.3) {
-
-            if (controllerState?.axes[0] > 0) {
-                api.position.set([-1, 5, 0]);
-            } else {
-                api.position.set([1, 5, 0]);
-            }
-
-        }
-
-    }, [controllerState]);
+export default function Player({ position = [0, 2, 0] }) {
+    const body = useRef();
+    const visual = useRef();
+    const lastLocation = useRef();
+    const initialPosition = useRef(position).current;
+    const direction = useMemo(() => new Vector3(), []);
+    const cameraTarget = useMemo(() => new Vector3(), []);
+    const server = useSearchParams().get("server");
+    const socket = useSocketStore((state) => state.socket);
+    const cameraMode = useGameStore((state) => state.cameraMode);
+    const teleport = useGameStore((state) => state.teleport);
+    const setTeleport = useGameStore((state) => state.setTeleport);
+    const setPlayerLocation = useGameStore((state) => state.setPlayerLocation);
+    const setShift = useGameStore((state) => state.setShift);
+    const debug = useStore((state) => state.debug);
+    const showPhysicsDebug = useStore(
+        (state) => state?.debugConfig?.showPhysicsDebug,
+    );
+    const toontownMode = useStore((state) => state.toontownMode);
+    const character = useStore((state) => state.character);
+    const SelectedModel = PLAYER_MODELS[character?.model] ?? ClownfishModel;
+    const playerModelScale =
+        character?.model === "Worm" || character?.model === "Zebra Clownfish"
+            ? 0.8
+            : 1;
+    const touchControls = useTouchControlsStore((state) => state.touchControls);
+    const setTouchControls = useTouchControlsStore(
+        (state) => state.setTouchControls,
+    );
+    const controllerState = useControllerStore(
+        (state) => state.controllerState,
+    );
+    const { moveBackward, moveForward, moveRight, moveLeft, jump, shift } =
+        useKeyboard();
+    const { camera } = useThree();
 
     useEffect(() => {
+        if (!teleport || !body.current) return;
+        body.current.setTranslation(
+            { x: teleport[0], y: teleport[1], z: teleport[2] },
+            true,
+        );
+        body.current.setLinvel({ x: 0, y: 0, z: 0 }, true);
+        setTeleport(false);
+    }, [teleport, setTeleport]);
 
-        if (teleport) {
+    useEffect(() => {
+        setShift(shift);
+    }, [shift, setShift]);
 
-            console.log("Teleport has been called!", teleport)
-            api.position.set(teleport[0], teleport[1], teleport[2]);
-            setTeleport(false)
-
+    useBeforePhysicsStep(() => {
+        if (!body.current) return;
+        const current = body.current.translation();
+        const velocity = body.current.linvel();
+        const x = MathUtils.clamp(current.x, -4, 4);
+        const y = Math.min(current.y, 6.5);
+        if (x !== current.x || y !== current.y) {
+            body.current.setTranslation({ x, y, z: current.z }, true);
         }
 
-    }, [teleport]);
+        const axes = controllerState.axes;
+        const axisX = Math.abs(axes?.[0] ?? 0) > 0.3 ? axes[0] : 0;
+        const axisY = Math.abs(axes?.[1] ?? 0) > 0.3 ? axes[1] : 0;
+        direction
+            .set(
+                Number(moveRight || touchControls.right) -
+                    Number(moveLeft || touchControls.left) +
+                    axisX,
+                Number(moveForward || touchControls.up) -
+                    Number(moveBackward || touchControls.down) -
+                    axisY,
+                0,
+            )
+            .clampLength(0, 1)
+            .multiplyScalar(SPEED * (shift ? 2 : 1));
 
-    const { moveBackward, moveForward, moveRight, moveLeft, jump, shift: isShifting, crouch } = useKeyboard()
-
-    const { camera } = useThree()
-
-    const [ref, api] = useSphere(() => ({
-        mass: 1,
-        args: [0.5],
-        position: [0, 2, 0],
-        onCollide: (e) => {
-
-            // console.log("Test Collide Test", e?.body)
-
-            if (e?.body?.userData?.isObstacle) {
-                console.log("Player collided with ring", e?.body?.userData)
-                addScore()
-            }
-
+        if ((jump || touchControls.jump) && Math.abs(velocity.y) < 0.05) {
+            direction.y = JUMP_FORCE;
+            if (touchControls.jump)
+                setTouchControls((controls) => ({ ...controls, jump: false }));
         }
-    }))
-
-    const material = new THREE.MeshPhysicalMaterial({
-        color: 'red',
-        opacity: 0.5,
-        transparent: true
+        if ((x <= -4 && direction.x < 0) || (x >= 4 && direction.x > 0))
+            direction.x = 0;
+        if (y >= 6.5 && direction.y > 0) direction.y = 0;
+        body.current.setLinvel(direction, true);
     });
 
-    const vel = useRef([0, 0, 0])
-    useEffect(() => {
-        api.velocity.subscribe((v) => vel.current = v)
-    }, [api.velocity])
-
-    const pos = useRef([0, 0, 0])
-    useEffect(() => {
-
-        api.position.subscribe((p) => pos.current = p)
-
-    }, [api.position])
-
-    useEffect(() => {
-        console.log("Shift", isShifting)
-        setShift(isShifting)
-    }, [isShifting])
-
     useFrame(() => {
+        if (!body.current) return;
+        const state = useGameStore.getState();
+        if (state.gameState.status === "In Progress") state.addDistance(0.1);
 
-        if (status == "In Progress") {
-            addDistance(0.1)
+        const current = body.current.translation();
+        if (cameraMode === "Player") {
+            camera.position.set(0, current.y, current.z + 15);
+            cameraTarget.set(0, current.y, current.z + 5);
+            camera.lookAt(cameraTarget);
         }
 
-        if (cameraMode == "Player") {
-            camera.position.copy(new Vector3(0, pos.current[1], (pos.current[2] + 15)))
-            camera.lookAt(new Vector3(0, pos.current[1], (pos.current[2] + 5)))
-        }
-
-        let posX = 0
-        if (pos.current[0]) {
-            posX = myToFixed(pos.current[0], 2)
-        }
-
-        // console.log(pos.current[1])
-        let posY = 0
-        if (pos.current[1]) {
-            posY = myToFixed(pos.current[1], 2)
-        }
-
-        let posZ = 0
-        if (pos.current[2]) {
-            posZ = myToFixed(pos.current[2], 2)
-        }
-
-        // console.log(posX)
-
-        let newLocation = new Vector3(posX, posY, posZ)
-
-        if (JSON.stringify(lastLocation) !== JSON.stringify(newLocation)) {
-            // console.log(newLocation, lastLocation)
-            setPlayerLocation(newLocation)
-
+        const location = new Vector3(
+            Math.floor(current.x * 100) / 100,
+            Math.floor(current.y * 100) / 100,
+            Math.floor(current.z * 100) / 100,
+        );
+        if (!lastLocation.current?.equals(location)) {
+            setPlayerLocation(location);
             if (socket && server) {
                 socket.emit(`game:${process.env.NEXT_PUBLIC_GAME_KEY}:move`, {
-                    server: server,
-                    x: newLocation.x,
-                    y: newLocation.y,
-                    z: newLocation.z,
-                    // action: action,
-                    // rotation: [0, degToRad(lastMove), 0]
-                })
+                    server,
+                    x: location.x,
+                    y: location.y,
+                    z: location.z,
+                });
             }
-
-            lastLocation = newLocation
+            lastLocation.current = location;
         }
-        // else {
-        //     console.log("location unchanged")
-        // }
-
-        // Prevent player from going above 6.5
-        if (pos.current[1] >= 6.5) {
-            api.position.set(pos.current[0], 6.5, pos.current[2]);
-            if (vel.current[1] > 0) {
-                api.velocity.set(vel.current[0], 0, vel.current[2]);
-            }
-        }
-
-        // Keep player between -10 and 10 on the X axis
-        if (pos.current[0] < -10) {
-            api.position.set(-10, pos.current[1], pos.current[2]);
-            if (vel.current[0] < 0) {
-                api.velocity.set(0, vel.current[1], vel.current[2]);
-            }
-        } else if (pos.current[0] > 10) {
-            api.position.set(10, pos.current[1], pos.current[2]);
-            if (vel.current[0] > 0) {
-                api.velocity.set(0, vel.current[1], vel.current[2]);
-            }
-        }
-
-        const direction = new Vector3()
-
-        const frontVector = new Vector3(
-            0,
-            (moveBackward || touchControls.down ? -1 : 0) - (moveForward || touchControls.up ? -1 : 0),
-            0
-        )
-
-        const sideVector = new Vector3(
-            (moveLeft || touchControls.left ? 1 : 0) - (moveRight || touchControls.right ? 1 : 0),
-            0,
-            0,
-        )
-
-        direction
-            .subVectors(frontVector, sideVector)
-            .normalize()
-            .multiplyScalar(SPEED * (shift ? 2 : 1))
-        // .applyEuler(camera.rotation)
-
-        api.velocity.set(direction.x, direction.y, 0)
-
-        if ((jump || touchControls.jump) && Math.abs(vel.current[1]) < 0.05) {
-
-            console.log("Jump understood")
-
-            api.velocity.set(vel.current[0], JUMP_FORCE, vel.current[2])
-
-            if (
-                touchControls.jump
-                // ||
-                // touchControls.left
-                // ||
-                // touchControls.right
-            ) {
-                setTouchControls({
-                    ...touchControls,
-                    jump: false,
-                    // left: false,
-                    // right: false
-                })
-            }
-        }
-
-    })
+    });
 
     return (
-        <group>
-
+        <>
             <Shadow
                 radius={0.8}
                 opacity={0.7}
-                position={[
-                    pos.current[0],
-                    -2 + hillHeight(pos.current[0], pos.current[2] - distance) + 0.05,
-                    pos.current[2]
-                ]}
+                target={visual}
             />
-
-            <mesh
-                ref={ref}
-                // {...props}
-                // position={position}
-                material={material}
+            <RigidBody
+                ref={body}
+                position={initialPosition}
+                colliders={false}
+                enabledRotations={[false, false, false]}
+                enabledTranslations={[true, true, false]}
+                canSleep={false}
+                ccd
+                userData={PLAYER_DATA}
             >
-
-                {debug && <sphereGeometry args={[0.5, 32, 32]} />}
-
-                {character.model == 'Clownfish' && <ClownfishModel rotation={[0, Math.PI / 1, 0]} />}
-                {character.model == 'Bone Fish' && <BoneFishModel rotation={[0, -Math.PI / 2, 0]} />}
-
-                {/* <Text
-                    color="black" position={[0, -0.7, 0]} scale={0.3} anchorX="center" anchorY="middle"
-                >
-                    Player ({character.model})
-                </Text> */}
-                
-            </mesh>
-
-        </group>
-    )
+                <BallCollider
+                    args={[0.5]}
+                    mass={1}
+                    friction={0}
+                    restitution={0}
+                />
+                <group ref={visual}>
+                    {showPhysicsDebug && (
+                        <mesh>
+                            <sphereGeometry args={[0.5, 16, 16]} />
+                            <meshBasicMaterial
+                                color="red"
+                                wireframe
+                                transparent
+                                opacity={0.5}
+                            />
+                        </mesh>
+                    )}
+                    <Suspense fallback={null}>
+                        <PlayerAppearance
+                            key={
+                                toontownMode
+                                    ? "toon"
+                                    : (character?.model ?? "Clownfish")
+                            }
+                        >
+                            {toontownMode ? (
+                                <ModelToonCharacter
+                                    scale={TOON_PLAYER_SCALE}
+                                    position={[0, 0, 0]}
+                                    rotation={[-Math.PI / 2, Math.PI, 0]}
+                                    action="swim"
+                                    isSwimming
+                                />
+                            ) : (
+                                <group scale={playerModelScale}>
+                                    <SelectedModel
+                                        position={
+                                            character?.model === "Bone Fish"
+                                                ? [-0.7, 0, 0]
+                                                : [0, 0, 0]
+                                        }
+                                        rotation={
+                                            character?.model === "Bone Fish"
+                                                ? [0, degToRad(180), 0]
+                                                : [0, Math.PI, 0]
+                                        }
+                                    />
+                                </group>
+                            )}
+                        </PlayerAppearance>
+                    </Suspense>
+                </group>
+            </RigidBody>
+        </>
+    );
 }
-
-export default PlayerBase

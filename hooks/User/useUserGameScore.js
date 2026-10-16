@@ -14,34 +14,30 @@ const fetcher = (obj) => {
         method: "GET",
         credentials: "same-origin",
         headers: {
-            "Accept": "application/json",
+            Accept: "application/json",
         },
-    })
-        .then((res) => {
-            if (!res.ok) throw new Error("Network response was not ok");
-            return res.json();
-        });
+    }).then((res) => {
+        if (!res.ok) throw new Error("Network response was not ok");
+        return res.json();
+    });
 };
 
 const useUserGameScore = (params) => {
-
     // const userReduxState = useSelector((state) => state.auth.user_details)
-    const userReduxState = false
+    const userReduxState = false;
 
     const { data, error, isLoading, mutate } = useSWR(
-        ((userReduxState?._id && params.game) ?
-            {
-                url: "/api/user/community/games/scoreboard/get",
-                game: `${params.game}`
-            }
-            :
-            null
-        ),
+        userReduxState?._id && params.game
+            ? {
+                  url: "/api/user/community/games/scoreboard/get",
+                  game: `${params.game}`,
+              }
+            : null,
         fetcher,
         {
             dedupingInterval: minutesToMilliseconds(10),
             focusThrottleInterval: minutesToMilliseconds(10),
-        }
+        },
     );
 
     return {

@@ -1,21 +1,20 @@
 // import { create } from 'zustand'
-import { createWithEqualityFn as create } from 'zustand/traditional'
+import { createWithEqualityFn as create } from "zustand/traditional";
 // import { generateRandomFishNickname } from '../util/generateRandomFishNickname'
 
-const assets_src = 'games/Ocean Rings/'
+const assets_src = "games/Ocean Rings/";
 
 export const useGameStore = create((set, get, store) => ({
-
     sceneKey: 0,
     setSceneKey: (newValue) => {
         set((prev) => ({
-            sceneKey: newValue
-        }))
+            sceneKey: newValue,
+        }));
     },
     incSceneKey: () => {
         set((prev) => ({
-            sceneKey: prev.sceneKey + 1
-        }))
+            sceneKey: prev.sceneKey + 1,
+        }));
     },
 
     // darkMode: null,
@@ -25,25 +24,25 @@ export const useGameStore = create((set, get, store) => ({
     //     }))
     // },
 
-    cameraMode: 'Player',
+    cameraMode: "Player",
     setCameraMode: (newValue) => {
         set((prev) => ({
-            cameraMode: newValue
-        }))
+            cameraMode: newValue,
+        }));
     },
 
     playerLocation: false,
     setPlayerLocation: (newValue) => {
         set((prev) => ({
-            playerLocation: newValue
-        }))
+            playerLocation: newValue,
+        }));
     },
 
     maxHeight: 0,
     setMaxHeight: (newValue) => {
         set((prev) => ({
-            maxHeight: newValue
-        }))
+            maxHeight: newValue,
+        }));
     },
 
     // debug: false,
@@ -56,78 +55,77 @@ export const useGameStore = create((set, get, store) => ({
     score: 0,
     setScore: (newValue) => {
         set((prev) => ({
-            score: newValue
-        }))
+            score: newValue,
+        }));
     },
     addScore: (newValue) => {
         set((prev) => ({
-            score: (prev.score + 1)
-        }))
+            score: prev.score + 1,
+        }));
     },
 
     distance: 0,
     setDistance: (newValue) => {
         set((prev) => ({
-            distance: newValue
-        }))
+            distance: newValue,
+        }));
     },
     addDistance: (newValue) => {
         set((prev) => ({
-            distance: (prev.distance + newValue)
-        }))
+            distance: prev.distance + newValue,
+        }));
     },
 
     obstacles: [],
     setObstacles: (newValue) => {
         set((prev) => ({
-            obstacles: newValue
-        }))
+            obstacles: newValue,
+        }));
     },
 
     totalObstaclesGenerated: 0,
     setTotalObstaclesGenerated: (newValue) => {
         set((prev) => ({
-            totalObstaclesGenerated: newValue
-        }))
+            totalObstaclesGenerated: newValue,
+        }));
     },
     incTotalObstaclesGenerated: () => {
         set((prev) => ({
-            totalObstaclesGenerated: prev.totalObstaclesGenerated + 1
-        }))
+            totalObstaclesGenerated: prev.totalObstaclesGenerated + 1,
+        }));
     },
 
     shift: false,
     setShift: (newValue) => {
         set((prev) => ({
-            shift: newValue
-        }))
+            shift: newValue,
+        }));
     },
 
     touchControls: {
         jump: false,
         left: false,
-        right: false
+        right: false,
     },
     setTouchControls: (newValue) => {
         set((prev) => ({
-            touchControls: newValue
-        }))
+            touchControls: newValue,
+        }));
     },
 
     teleport: false,
     setTeleport: (newValue) => {
         set((prev) => ({
-            teleport: newValue
-        }))
+            teleport: newValue,
+        }));
     },
 
     gameState: {},
     setGameState: (newValue) => {
         set((prev) => ({
-            gameState: newValue
-        }))
+            gameState: newValue,
+        }));
     },
 
     reset: () => set(store.getInitialState()),
-
-}))
+}));

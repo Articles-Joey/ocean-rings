@@ -4,8 +4,8 @@ Command: npx gltfjsx@6.5.2 models\Dock_Wide.glb --output output\Dock_Wide.js --t
 Files: models\Dock_Wide.glb [91.9KB] > F:\My Documents\Articles Media\AMCOT\Models\Quaternius\Fishing\JSX\output\Dock_Wide-transformed.glb [10.77KB] (88%)
 */
 
-import React from 'react'
-import { useGLTF } from '@react-three/drei'
+import React from "react";
+import { useGLTF } from "@react-three/drei";
 
 // let link = `${process.env.NEXT_PUBLIC_CDN}games/Assets/Quaternius/Fishing/Models/Dock_Wide.glb`
 
@@ -14,21 +14,40 @@ import { useGLTF } from '@react-three/drei'
 //     link = `/models/decorations/Dock_Wide.glb`
 // }
 
-import getAssetSource from '@articles-media/articles-dev-box/getAssetSource';
+import getAssetSource from "@articles-media/articles-dev-box/getAssetSource";
 
-const link = getAssetSource(
-  `/models/decorations/Dock_Wide.glb`
-);
+const link = getAssetSource(`/models/decorations/Dock_Wide.glb`);
 
 export function ModelQuaterniusFishingDock_Wide(props) {
-  const { nodes, materials } = useGLTF(link)
-  return (
-    <group {...props} dispose={null}>
-      <mesh name="Cylinder004" castShadow receiveShadow geometry={nodes.Cylinder004.geometry} material={materials.Wood} />
-      <mesh name="Cylinder004_1" castShadow receiveShadow geometry={nodes.Cylinder004_1.geometry} material={materials.LightWood} />
-      <mesh name="Cylinder004_2" castShadow receiveShadow geometry={nodes.Cylinder004_2.geometry} material={materials.String} />
-    </group>
-  )
+    const { nodes, materials } = useGLTF(link);
+    return (
+        <group
+            {...props}
+            dispose={null}
+        >
+            <mesh
+                name="Cylinder004"
+                castShadow
+                receiveShadow
+                geometry={nodes.Cylinder004.geometry}
+                material={materials.Wood}
+            />
+            <mesh
+                name="Cylinder004_1"
+                castShadow
+                receiveShadow
+                geometry={nodes.Cylinder004_1.geometry}
+                material={materials.LightWood}
+            />
+            <mesh
+                name="Cylinder004_2"
+                castShadow
+                receiveShadow
+                geometry={nodes.Cylinder004_2.geometry}
+                material={materials.String}
+            />
+        </group>
+    );
 }
 
-useGLTF.preload(link)
+useGLTF.preload(link);

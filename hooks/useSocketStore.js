@@ -1,11 +1,11 @@
 // import { create } from "zustand";
-import { createWithEqualityFn as create } from 'zustand/traditional'
+import { createWithEqualityFn as create } from "zustand/traditional";
 import { io } from "socket.io-client";
 
 export const useSocketStore = create((set) => ({
     // socket: null,
     socket: io({
-        autoConnect: false
+        autoConnect: false,
     }),
     serverUrl: process.env.NEXT_PUBLIC_NODE_SERVER, // Default server URL
     connectSocket: (url) => {
@@ -17,27 +17,31 @@ export const useSocketStore = create((set) => ({
             reconnectionDelay: 5000,
             reconnectionDelayMax: 10000,
             query: {
-                "client": "ocean-rings"
+                client: "ocean-rings",
             },
         });
         newSocket.connect();
         set({ socket: newSocket });
     },
     setServerUrl: (url) => set({ serverUrl: url }),
-    disconnectSocket: () => set((state) => {
-        state.socket?.disconnect();
-        return {}
-        // Disconnect but do not dump socket store or socket.on and socket.connected will be undefined if not careful
-        // return { socket: null };
-    }),
+    disconnectSocket: () =>
+        set((state) => {
+            state.socket?.disconnect();
+            return {};
+            // Disconnect but do not dump socket store or socket.on and socket.connected will be undefined if not careful
+            // return { socket: null };
+        }),
     startGame: (gameId, status) => {
         set((state) => {
-            state.socket.emit(`game:${process.env.NEXT_PUBLIC_GAME_KEY}:start`, {
-                game_id: gameId,
-                status: status
-            });
-            return {}
-        })
+            state.socket.emit(
+                `game:${process.env.NEXT_PUBLIC_GAME_KEY}:start`,
+                {
+                    game_id: gameId,
+                    status: status,
+                },
+            );
+            return {};
+        });
     },
     totalUsers: 0,
     setTotalUsers: (total) => set({ totalUsers: total }),
@@ -48,11 +52,11 @@ export const useSocketStore = create((set) => ({
     loginSocket: (data) => {
         set((state) => {
             const socket = state.socket;
-            socket.emit('login-socket', {
+            socket.emit("login-socket", {
                 ...data,
                 game_name: process.env.NEXT_PUBLIC_GAME_NAME,
             });
-            return {}
-        })
+            return {};
+        });
     },
 }));

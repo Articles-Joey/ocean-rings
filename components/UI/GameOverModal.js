@@ -20,25 +20,47 @@ export default function GameOverModal() {
     const distance = useGameStore((state) => state.distance);
 
     return (
-        <Dialog open fullWidth maxWidth="sm" scroll="paper" disableEscapeKeyDown aria-labelledby="game-over-title">
+        <Dialog
+            open
+            fullWidth
+            maxWidth="xs"
+            scroll="paper"
+            disableEscapeKeyDown
+            aria-labelledby="game-over-title"
+        >
             <DialogTitle id="game-over-title">Game Over</DialogTitle>
             <DialogContent sx={{ p: 0 }}>
                 {!server && (
                     <Box sx={{ p: "1rem" }}>
-                        <Box sx={{ mb: "0.25rem" }}>You had a score of {score}!</Box>
-                        <Box>You traveled a distance of {distance.toFixed(0)} meters!</Box>
+                        <Box sx={{ mb: "0.25rem" }}>
+                            You had a score of {score}!
+                        </Box>
+                        <Box>
+                            You traveled a distance of {distance.toFixed(0)}{" "}
+                            meters!
+                        </Box>
                     </Box>
                 )}
             </DialogContent>
             <DialogActions sx={{ justifyContent: "space-between" }}>
                 <Link href="/">
-                    <ArticlesButton variant="articles" onClick={() => useGameStore.getState().reset()}>Close</ArticlesButton>
+                    <ArticlesButton
+                        variant="articles"
+                        onClick={() => useGameStore.getState().reset()}
+                    >
+                        Close
+                    </ArticlesButton>
                 </Link>
-                <ArticlesButton variant="articles" onClick={() => {
-                    useGameStore.getState().reset();
-                    handleStartGame(server, "In Lobby");
-                    reloadScene();
-                }}>Play Again</ArticlesButton>
+                <ArticlesButton
+                    variant="articles"
+                    onClick={() => {
+                        useGameStore.getState().reset();
+                        handleStartGame(server, "In Lobby");
+                        reloadScene();
+                    }}
+                >
+                    Play Again
+                </ArticlesButton>
             </DialogActions>
         </Dialog>
     );

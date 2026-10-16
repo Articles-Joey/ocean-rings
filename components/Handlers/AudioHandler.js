@@ -4,7 +4,6 @@ import { useAudioStore } from "@/hooks/useAudioStore";
 import { useEffect, useRef } from "react";
 
 export default function AudioHandler() {
-
     const audioSettings = useAudioStore((state) => state?.audioSettings);
     const setAudioSettings = useAudioStore((state) => state?.setAudioSettings);
 
@@ -13,7 +12,7 @@ export default function AudioHandler() {
 
     // Initialize audio object once
     useEffect(() => {
-        if (typeof window === 'undefined') return;
+        if (typeof window === "undefined") return;
 
         const music = new Audio(`/audio/audio-loop.mp3`);
         musicRef.current = music;
@@ -30,8 +29,10 @@ export default function AudioHandler() {
             }
         };
 
-        const events = ['click', 'keydown', 'touchstart', 'pointerdown'];
-        events.forEach((e) => document.addEventListener(e, tryPlay, { once: true }));
+        const events = ["click", "keydown", "touchstart", "pointerdown"];
+        events.forEach((e) =>
+            document.addEventListener(e, tryPlay, { once: true }),
+        );
 
         return () => {
             events.forEach((e) => document.removeEventListener(e, tryPlay));
@@ -45,7 +46,9 @@ export default function AudioHandler() {
         const music = musicRef.current;
         if (!music) return;
 
-        music.volume = audioSettings?.enabled ? (audioSettings?.music_volume / 100) : 0;
+        music.volume = audioSettings?.enabled
+            ? audioSettings?.music_volume / 100
+            : 0;
 
         if (audioSettings?.enabled) {
             if (interactedRef.current) {
@@ -59,5 +62,4 @@ export default function AudioHandler() {
     }, [audioSettings]);
 
     return null;
-
 }

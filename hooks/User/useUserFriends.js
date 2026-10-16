@@ -4,26 +4,21 @@ import useSWR from "swr";
 
 // import axios from "axios";
 
-const fetcher = url => fetch(url).then(r => r.json())
+const fetcher = (url) => fetch(url).then((r) => r.json());
 
 const useUserFriends = () => {
-
     // const url = userId ? `/api/posts?userId=${userId}` : "/api/posts";
 
     // const userReduxState = useSelector((state) => state.auth.user_details)
-    const userReduxState = false
+    const userReduxState = false;
 
     const { data, error, isLoading, mutate } = useSWR(
-        (userReduxState._id ?
-            "/api/user/friends"
-            :
-            null
-        ),
+        userReduxState._id ? "/api/user/friends" : null,
         fetcher,
         {
-            dedupingInterval: ((1000 * 60) * 30),
-            focusThrottleInterval: (1000 * 60 * 30),
-        }
+            dedupingInterval: 1000 * 60 * 30,
+            focusThrottleInterval: 1000 * 60 * 30,
+        },
     );
 
     return {
